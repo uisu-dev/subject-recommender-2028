@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+:root {
+  --accent: 30 58 138; /* indigo-900-ish */
+}
+
+html, body {
+  background: #f5f6f8;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Print rules: only the .print-area is shown when printing */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm 12mm;
+  }
+  body {
+    background: white;
+  }
+  .no-print { display: none !important; }
+  .print-area {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .print-page {
+    page-break-after: always;
+  }
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+}
+
+/* PDF preview shell mimics A4 ratio */
+.a4-preview {
+  width: 100%;
+  max-width: 794px; /* ~A4 width at 96dpi */
+  min-height: 1100px;
+  background: white;
+  margin: 0 auto;
+  padding: 40px 36px;
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  border-radius: 6px;
+}
+
+.subject-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+}
+
+.subject-chip.core {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #3730a3;
+}
+
+.subject-chip.rec {
+  background: #ecfeff;
+  border-color: #a5f3fc;
+  color: #155e75;
+}
