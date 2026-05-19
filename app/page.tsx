@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  file1,
   file2Parsed,
   normalize,
   regionList,
@@ -11,22 +10,15 @@ import {
 } from "@/lib/data";
 import SearchBox from "@/components/SearchBox";
 import UnivDeptResults from "@/components/UnivDeptResults";
-import MajorResults from "@/components/MajorResults";
 import PrintPreview from "@/components/PrintPreview";
 import FilterChips from "@/components/FilterChips";
 import CartBar from "@/components/CartBar";
 import SubjectSearch from "@/components/SubjectSearch";
-import type {
-  CartItem,
-  File1Group,
-  File2Row,
-  HeaderInfo,
-} from "@/lib/types";
+import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
-type Tab = "univ" | "major" | "subject";
+type Tab = "univ" | "subject";
 type PrintMode =
-  | { kind: "single-file2"; rows: File2Row[]; label: string }
-  | { kind: "single-file1"; group: File1Group; label: string }
+  | { kind: "single"; rows: File2Row[]; label: string }
   | { kind: "compare"; items: CartItem[] };
 
 const HEADER_KEY = "subject-recommender:header-info";
@@ -45,7 +37,6 @@ export default function Home() {
     student: "",
   });
 
-  // Load persisted header info from localStorage (school/counselor only, not student)
   useEffect(() => {
     try {
       const raw = localStorage.getItem(HEADER_KEY);
@@ -91,16 +82,6 @@ export default function Home() {
       return hay.includes(nq);
     });
   }, [nq, region, area]);
-
-  const file1Hits: File1Group[] = useMemo(() => {
-    if (!nq) return [];
-    return file1.filter((g) => {
-      const hay = normalize(
-        `${g.계열} ${g.모집단위} ${g.대학별.map((u) => u.대학표기).join(" ")}`
-      );
-      return hay.includes(nq);
-    });
-  }, [nq]);
 
   const cartIds = useMemo(() => new Set(cart.map((c) => c.id)), [cart]);
 
@@ -165,19 +146,13 @@ export default function Home() {
           <TabButton
             active={tab === "univ"}
             onClick={() => setTab("univ")}
-            label={`대학별 검색`}
+            label="대학 / 학과별 검색"
             count={tab !== "subject" && query ? file2Hits.length : null}
-          />
-          <TabButton
-            active={tab === "major"}
-            onClick={() => setTab("major")}
-            label={`계열·모집단위별`}
-            count={tab !== "subject" && query ? file1Hits.length : null}
           />
           <TabButton
             active={tab === "subject"}
             onClick={() => setTab("subject")}
-            label={`과목 이수 기반`}
+            label="과목 이수 기반 검색"
             count={null}
           />
         </div>
@@ -200,7 +175,7 @@ export default function Home() {
               />
               {query && (
                 <span className="ml-auto text-sm text-ink-500">
-                  대학별 {file2Hits.length}건 · 계열별 {file1Hits.length}건
+                  {file2Hits.length}건
                 </span>
               )}
             </div>
@@ -215,20 +190,7 @@ export default function Home() {
               cartIds={cartIds}
               onToggleCart={toggleCart}
               onPick={(rows, label) =>
-                setPrinting({ kind: "single-file2", rows, label })
-              }
-            />
-          )}
-          {tab === "major" && (
-            <MajorResults
-              query={query}
-              groups={file1Hits}
-              onPick={(group) =>
-                setPrinting({
-                  kind: "single-file1",
-                  group,
-                  label: `${group.계열} · ${group.모집단위}`,
-                })
+                setPrinting({ kind: "single", rows, label })
               }
             />
           )}
@@ -242,7 +204,7 @@ export default function Home() {
               cartIds={cartIds}
               onToggleCart={toggleCart}
               onPick={(rows, label) =>
-                setPrinting({ kind: "single-file2", rows, label })
+                setPrinting({ kind: "single", rows, label })
               }
             />
           )}
@@ -255,9 +217,7 @@ export default function Home() {
           setCart((prev) => prev.filter((c) => c.id !== id))
         }
         onClear={() => setCart([])}
-        onCompare={() =>
-          setPrinting({ kind: "compare", items: cart })
-        }
+        onCompare={() => setPrinting({ kind: "compare", items: cart })}
       />
 
       {printing && (
@@ -270,8 +230,7 @@ export default function Home() {
       )}
 
       <footer className="no-print mx-auto max-w-6xl px-6 pb-10 pt-6 text-xs text-ink-500">
-        출처: 2028학년도 권역별 대학별 권장과목(반영과목) · 2028학년도 계열별
-        대표 모집단위별 반영과목(권장과목)
+        출처: 2028학년도 권역별 대학별 권장과목(반영과목)
       </footer>
     </main>
   );
@@ -292,9 +251,7 @@ function TabButton({
     <button
       onClick={onClick}
       className={`px-4 py-2 text-sm font-medium rounded-md transition ${
-        active
-          ? "bg-indigo-600 text-white"
-          : "text-ink-700 hover:bg-ink-100"
+        active ? "bg-indigo-600 text-white" : "text-ink-700 hover:bg-ink-100"
       }`}
     >
       {label}

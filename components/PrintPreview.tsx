@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { CartItem, File1Group, File2Row, HeaderInfo } from "@/lib/types";
+import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
 type Mode =
-  | { kind: "single-file2"; rows: File2Row[]; label: string }
-  | { kind: "single-file1"; group: File1Group; label: string }
+  | { kind: "single"; rows: File2Row[]; label: string }
   | { kind: "compare"; items: CartItem[] };
 
 type Props = {
@@ -60,7 +59,7 @@ export default function PrintPreview({
   });
 
   const title =
-    mode.kind === "single-file1" || mode.kind === "single-file2"
+    mode.kind === "single"
       ? mode.label
       : `학과 비교 (${mode.items.length}개)`;
 
@@ -122,8 +121,7 @@ export default function PrintPreview({
       <div className="absolute inset-0 overflow-auto px-4 pb-12 pt-44">
         <div className={`print-area ${isLandscape ? "a4-landscape" : "a4-preview"}`}>
           <PrintHeader title={title} today={today} info={draft} />
-          {mode.kind === "single-file2" && <File2Print rows={mode.rows} />}
-          {mode.kind === "single-file1" && <File1Print group={mode.group} />}
+          {mode.kind === "single" && <File2Print rows={mode.rows} />}
           {mode.kind === "compare" && <ComparePrint items={mode.items} />}
           <PrintFooter />
         </div>
@@ -264,68 +262,6 @@ function File2Print({ rows }: { rows: File2Row[] }) {
           </table>
         </div>
       ))}
-    </section>
-  );
-}
-
-const AREA_ORDER = ["국어", "수학", "영어", "사회", "과학", "기타"];
-
-function File1Print({ group }: { group: File1Group }) {
-  const pivot = new Map<string, Map<string, string[]>>();
-  for (const u of group.대학별) {
-    for (const s of u.과목) {
-      if (!pivot.has(s.영역)) pivot.set(s.영역, new Map());
-      const sub = pivot.get(s.영역)!;
-      if (!sub.has(s.과목)) sub.set(s.과목, []);
-      sub.get(s.과목)!.push(u.대학표기);
-    }
-  }
-  const orderedAreas = AREA_ORDER.filter((a) => pivot.has(a)).concat(
-    Array.from(pivot.keys()).filter((a) => !AREA_ORDER.includes(a))
-  );
-
-  return (
-    <section>
-      <p className="mb-3 text-xs text-ink-500">
-        계열 대표 모집단위 기준으로 과목별 권장 대학을 정리한 표입니다.
-      </p>
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="border-y-2 border-ink-700">
-            <th className="w-24 px-2 py-2 text-left text-xs font-bold text-ink-900">
-              영역
-            </th>
-            <th className="w-28 px-2 py-2 text-left text-xs font-bold text-ink-900">
-              과목
-            </th>
-            <th className="px-2 py-2 text-left text-xs font-bold text-ink-900">
-              권장 대학
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {orderedAreas.map((area) => {
-            const subjects = Array.from(pivot.get(area)!.entries());
-            return subjects.map(([subj, univs], i) => (
-              <tr
-                key={`${area}-${subj}`}
-                className="border-b border-ink-100 align-top"
-              >
-                {i === 0 && (
-                  <td
-                    rowSpan={subjects.length}
-                    className="border-r border-ink-100 px-2 py-1.5 font-semibold text-indigo-700"
-                  >
-                    {area}
-                  </td>
-                )}
-                <td className="px-2 py-1.5 text-ink-900">{subj}</td>
-                <td className="px-2 py-1.5 text-ink-700">{univs.join(", ")}</td>
-              </tr>
-            ));
-          })}
-        </tbody>
-      </table>
     </section>
   );
 }
