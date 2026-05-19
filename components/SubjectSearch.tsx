@@ -1,12 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SUBJECTS, domainOf, evaluateMatch, type Domain } from "@/lib/subjects";
 import type { File2Row } from "@/lib/types";
 import type { File2RowWithParsed } from "@/lib/data";
 import { rowId } from "@/lib/data";
 import FilterChips from "./FilterChips";
 import { regionList, areaList } from "@/lib/data";
+import {
+  loadSchoolStore,
+  saveSchoolStore,
+  type SchoolStore,
+} from "@/lib/schools";
+import SchoolSetup from "./SchoolSetup";
 
 type Props = {
   rows: File2RowWithParsed[];
@@ -56,6 +62,40 @@ export default function SubjectSearch({
     "all" | "match-only" | "match-and-open"
   >("match-and-open");
   const [query, setQuery] = useState("");
+  const [schoolStore, setSchoolStore] = useState<SchoolStore>({
+    schools: [],
+    activeId: null,
+  });
+  const [showSetup, setShowSetup] = useState(false);
+
+  useEffect(() => {
+    setSchoolStore(loadSchoolStore());
+  }, []);
+
+  const updateStore = (next: SchoolStore) => {
+    setSchoolStore(next);
+    saveSchoolStore(next);
+  };
+
+  const activeSchool = useMemo(
+    () => schoolStore.schools.find((s) => s.id === schoolStore.activeId) || null,
+    [schoolStore]
+  );
+
+  const offeredSet = useMemo(
+    () => (activeSchool ? new Set(activeSchool.offeredSubjects) : null),
+    [activeSchool]
+  );
+
+  // When school changes, drop "taken" subjects the new school doesn't offer.
+  useEffect(() => {
+    if (!offeredSet) return;
+    setSelected((prev) => {
+      const next = new Set<string>();
+      for (const s of prev) if (offeredSet.has(s)) next.add(s);
+      return next;
+    });
+  }, [activeSchool?.id]);
 
   const studentDomains = useMemo(() => {
     const ds = new Set<Domain>();
@@ -120,12 +160,68 @@ export default function SubjectSearch({
     });
   };
 
-  const resetSubjects = () => setSelected(new Set(DEFAULT_TAKEN));
+  const resetSubjects = () => {
+    if (offeredSet) {
+      // Reset to intersection of defaults with the active school's offered set
+      const next = new Set<string>();
+      for (const s of DEFAULT_TAKEN) if (offeredSet.has(s)) next.add(s);
+      setSelected(next);
+    } else {
+      setSelected(new Set(DEFAULT_TAKEN));
+    }
+  };
   const clearSubjects = () => setSelected(new Set());
 
   return (
     <div className="grid gap-6 lg:grid-cols-[320px,1fr]">
-      <aside className="lg:sticky lg:top-4 lg:self-start">
+      <aside className="lg:sticky lg:top-4 lg:self-start space-y-3">
+        {/* School selector */}
+        <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-bold text-ink-900">고등학교</h3>
+            <button
+              onClick={() => setShowSetup(true)}
+              className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[11px] text-ink-700 hover:bg-ink-100"
+            >
+              설정
+            </button>
+          </div>
+          {schoolStore.schools.length === 0 ? (
+            <p className="text-[11px] leading-relaxed text-ink-500">
+              학교를 등록하면 그 학교에서 개설된 과목만 표시됩니다.{" "}
+              <button
+                onClick={() => setShowSetup(true)}
+                className="font-medium text-indigo-700 hover:underline"
+              >
+                학교 추가
+              </button>
+            </p>
+          ) : (
+            <select
+              value={schoolStore.activeId ?? ""}
+              onChange={(e) =>
+                updateStore({
+                  ...schoolStore,
+                  activeId: e.target.value || null,
+                })
+              }
+              className="w-full rounded-md border border-ink-200 bg-white px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
+            >
+              <option value="">전체 과목 표시 (학교 미선택)</option>
+              {schoolStore.schools.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {activeSchool && (
+            <p className="mt-2 text-[10px] text-ink-500">
+              개설 {activeSchool.offeredSubjects.length}과목만 표시
+            </p>
+          )}
+        </div>
+
         <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink-900">이수한 과목</h3>
@@ -150,7 +246,9 @@ export default function SubjectSearch({
           </p>
           <div className="space-y-3">
             {DOMAIN_ORDER.map((d) => {
-              const subs = SUBJECTS.filter((s) => s.domain === d);
+              const subs = SUBJECTS.filter((s) => s.domain === d).filter(
+                (s) => !offeredSet || offeredSet.has(s.name)
+              );
               if (subs.length === 0) return null;
               return (
                 <div key={d}>
@@ -179,6 +277,11 @@ export default function SubjectSearch({
               );
             })}
           </div>
+          {offeredSet && offeredSet.size === 0 && (
+            <p className="mt-3 rounded bg-amber-50 p-2 text-[11px] text-amber-700">
+              이 학교에 개설된 과목이 없습니다. 설정에서 과목을 선택해주세요.
+            </p>
+          )}
         </div>
       </aside>
 
@@ -349,6 +452,14 @@ export default function SubjectSearch({
           </p>
         )}
       </div>
+
+      {showSetup && (
+        <SchoolSetup
+          store={schoolStore}
+          onChange={updateStore}
+          onClose={() => setShowSetup(false)}
+        />
+      )}
     </div>
   );
 }
