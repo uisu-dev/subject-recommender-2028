@@ -121,19 +121,42 @@ export default function Home() {
   return (
     <main className="min-h-screen pb-32">
       <header className="no-print bg-white border-b border-ink-200">
-        <div className="mx-auto max-w-6xl px-6 py-6">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-2xl font-bold text-ink-900">
-              2028 권장과목 검색
-            </h1>
-            <span className="text-sm text-ink-500">
-              대학 · 학과별 반영과목 안내
-            </span>
+        <div className="mx-auto flex max-w-6xl items-start justify-between gap-6 px-6 py-6">
+          <div className="min-w-0">
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-2xl font-bold text-ink-900">
+                2028 권장과목 검색
+              </h1>
+              <span className="text-sm text-ink-500">
+                대학 · 학과별 반영과목 안내
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-ink-700">
+              상담용 도구입니다. 학과를 검색하거나, 이수한 과목으로 갈 수 있는
+              학과를 역검색할 수 있습니다.
+            </p>
           </div>
-          <p className="mt-1 text-sm text-ink-700">
-            상담용 도구입니다. 학과를 검색하거나, 이수한 과목으로 갈 수 있는
-            학과를 역검색할 수 있습니다.
-          </p>
+          <aside className="shrink-0 rounded-lg border border-ink-200 bg-ink-50/60 px-4 py-2 text-right text-[11px] leading-relaxed text-ink-700">
+            <p className="font-semibold text-ink-500">개발 및 문의</p>
+            <p>
+              배방고등학교 교사 김혜진{" "}
+              <a
+                href="mailto:rmeosahf@naver.com"
+                className="text-indigo-700 hover:underline"
+              >
+                rmeosahf@naver.com
+              </a>
+            </p>
+            <p>
+              천안중학교 교사 임의수{" "}
+              <a
+                href="mailto:uisu@kakao.com"
+                className="text-indigo-700 hover:underline"
+              >
+                uisu@kakao.com
+              </a>
+            </p>
+          </aside>
         </div>
       </header>
 
