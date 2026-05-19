@@ -52,27 +52,39 @@ export function newSchoolId(): string {
 }
 
 /**
- * Sensible defaults: a Korean high school typically offers all common subjects.
- * Users edit from here.
+ * Sensible defaults: subjects offered by most Korean general high schools.
+ * Users edit from here (add/remove based on their school's actual curriculum).
  */
 export const COMMON_OFFERED: string[] = [
+  // 국어
   "국어",
   "화법과 언어",
   "독서와 작문",
   "문학",
+  // 수학
   "대수",
   "확률과 통계",
   "미적분Ⅰ",
   "미적분Ⅱ",
   "기하",
+  // 영어
   "영어",
+  "영어 독해와 작문",
+  // 사회 (일반사회/역사/지리/윤리 핵심)
   "일반사회",
-  "역사",
-  "지리",
-  "윤리",
+  "사회와 문화",
+  "한국지리",
+  "세계사",
+  "윤리와 사상",
+  "현대사회와 윤리",
+  // 과학
   "물리학",
   "화학",
   "생명과학",
   "지구과학",
+  // 한국사
   "한국사",
+  // 기타
+  "한문",
+  "정보",
 ];
