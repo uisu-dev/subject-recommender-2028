@@ -7,14 +7,7 @@ import type { File2RowWithParsed } from "@/lib/data";
 import { rowId } from "@/lib/data";
 import FilterChips from "./FilterChips";
 import { regionList, areaList } from "@/lib/data";
-import {
-  fetchSchools,
-  loadActiveId,
-  saveActiveId,
-  subscribeSchools,
-  isSupabaseEnabled,
-  type HighSchool,
-} from "@/lib/schools";
+import { CONTACT_EMAIL, SCHOOLS, loadActiveId, saveActiveId } from "@/lib/schools";
 import SchoolSetup from "./SchoolSetup";
 
 type Props = {
@@ -64,30 +57,12 @@ export default function SubjectSearch({
     "all" | "match-only" | "match-and-open"
   >("match-and-open");
   const [query, setQuery] = useState("");
-  const [schools, setSchools] = useState<HighSchool[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showSetup, setShowSetup] = useState(false);
 
-  // Initial fetch + real-time subscription
   useEffect(() => {
-    let alive = true;
-    fetchSchools().then((list) => {
-      if (alive) setSchools(list);
-    });
     setActiveId(loadActiveId());
-    const unsubscribe = subscribeSchools((list) => {
-      if (alive) setSchools(list);
-    });
-    return () => {
-      alive = false;
-      unsubscribe();
-    };
   }, []);
-
-  const refreshSchools = async () => {
-    const list = await fetchSchools();
-    setSchools(list);
-  };
 
   const handleActiveChange = (id: string | null) => {
     setActiveId(id);
@@ -95,8 +70,8 @@ export default function SubjectSearch({
   };
 
   const activeSchool = useMemo(
-    () => schools.find((s) => s.id === activeId) || null,
-    [schools, activeId]
+    () => SCHOOLS.find((s) => s.id === activeId) || null,
+    [activeId]
   );
 
   const offeredSet = useMemo(
@@ -191,34 +166,23 @@ export default function SubjectSearch({
       <aside className="lg:sticky lg:top-4 lg:self-start space-y-3">
         <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-ink-900">
-              고등학교{" "}
-              {isSupabaseEnabled ? (
-                <span className="ml-1 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700">
-                  실시간 공유
-                </span>
-              ) : (
-                <span className="ml-1 rounded-full bg-ink-100 px-1.5 py-0.5 text-[9px] font-bold text-ink-500">
-                  로컬
-                </span>
-              )}
-            </h3>
+            <h3 className="text-sm font-bold text-ink-900">고등학교</h3>
             <button
               onClick={() => setShowSetup(true)}
               className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[11px] text-ink-700 hover:bg-ink-100"
             >
-              설정
+              목록 보기
             </button>
           </div>
-          {schools.length === 0 ? (
+          {SCHOOLS.length === 0 ? (
             <p className="text-[11px] leading-relaxed text-ink-500">
-              학교를 등록하면 그 학교에서 개설된 과목만 표시됩니다.{" "}
-              <button
-                onClick={() => setShowSetup(true)}
+              아직 등록된 학교가 없습니다. 학교 등록 요청은{" "}
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="font-medium text-indigo-700 hover:underline"
               >
-                학교 추가
-              </button>
+                {CONTACT_EMAIL}
+              </a>
             </p>
           ) : (
             <select
@@ -227,7 +191,7 @@ export default function SubjectSearch({
               className="w-full rounded-md border border-ink-200 bg-white px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
             >
               <option value="">전체 과목 표시 (학교 미선택)</option>
-              {schools.map((s) => (
+              {SCHOOLS.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
                 </option>
@@ -239,6 +203,16 @@ export default function SubjectSearch({
               개설 {activeSchool.offeredSubjects.length}과목만 표시
             </p>
           )}
+          <p className="mt-2 text-[10px] leading-relaxed text-ink-500">
+            내 학교가 없다면{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("[2028 권장과목] 학교 추가 요청")}`}
+              className="text-indigo-700 hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            로 개설 과목을 보내주세요.
+          </p>
         </div>
 
         <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
@@ -474,10 +448,11 @@ export default function SubjectSearch({
 
       {showSetup && (
         <SchoolSetup
-          schools={schools}
           activeId={activeId}
-          onSetActive={handleActiveChange}
-          onChange={refreshSchools}
+          onSetActive={(id) => {
+            handleActiveChange(id);
+            setShowSetup(false);
+          }}
           onClose={() => setShowSetup(false)}
         />
       )}
