@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,16 +18,13 @@ export default function RootLayout({
     <html lang="ko">
       <head>
         <meta name="google-adsense-account" content={ADSENSE_CLIENT_ID} />
-      </head>
-      <body className="font-sans">
-        {children}
-        <Script
+        <script
           async
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
           src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-        />
-      </body>
+          crossOrigin="anonymous"
+        ></script>
+      </head>
+      <body className="font-sans">{children}</body>
     </html>
   );
 }
