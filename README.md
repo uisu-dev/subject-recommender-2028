@@ -11,17 +11,16 @@
 
 ### 학교 추가/수정 (관리자용)
 
-학교 등록 요청 이메일을 받으면 `data/schools.json`에 다음 형태로 한 항목 추가:
+두 가지 방법:
 
-```json
-{
-  "id": "고유한-슬러그",
-  "name": "○○고등학교",
-  "offeredSubjects": ["국어", "대수", "확률과 통계", "..."]
-}
-```
+**A. 관리자 모드 (권장)** — [ADMIN_SETUP.md](./ADMIN_SETUP.md) 참조
+- 사이트에서 직접 로그인 → 학교 추가/편집/삭제 UI 사용
+- 저장 시 GitHub에 자동 커밋, Vercel 재배포
 
-`offeredSubjects` 값은 `lib/subjects.ts`의 캐노니컬 과목명과 정확히 일치해야 합니다 (예: "확률과 통계", "미적분Ⅰ"). 이후 commit + push → Vercel 자동 재배포.
+**B. JSON 직접 편집 (백업 수단)**
+- `data/schools.json`을 GitHub 웹 또는 로컬에서 편집
+- `offeredSubjects` 값은 `lib/subjects.ts`의 캐노니컬 과목명과 정확히 일치해야 함 (예: "확률과 통계", "미적분Ⅰ")
+- commit + push → Vercel 자동 재배포
 
 ## 기능
 

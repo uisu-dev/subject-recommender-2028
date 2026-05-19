@@ -19,6 +19,7 @@ type Props = {
   cartIds: Set<string>;
   onToggleCart: (row: File2Row, idx: number) => void;
   onPick: (rows: File2Row[], label: string) => void;
+  adminMode: boolean;
 };
 
 const DOMAIN_ORDER: Domain[] = [
@@ -49,6 +50,7 @@ export default function SubjectSearch({
   cartIds,
   onToggleCart,
   onPick,
+  adminMode,
 }: Props) {
   const [selected, setSelected] = useState<Set<string>>(
     () => new Set(DEFAULT_TAKEN)
@@ -166,12 +168,19 @@ export default function SubjectSearch({
       <aside className="lg:sticky lg:top-4 lg:self-start space-y-3">
         <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-bold text-ink-900">고등학교</h3>
+            <h3 className="text-sm font-bold text-ink-900">
+              고등학교
+              {adminMode && (
+                <span className="ml-1.5 rounded-full bg-indigo-100 px-1.5 py-0.5 text-[9px] font-bold text-indigo-700">
+                  관리자
+                </span>
+              )}
+            </h3>
             <button
               onClick={() => setShowSetup(true)}
               className="rounded border border-ink-200 bg-white px-2 py-0.5 text-[11px] text-ink-700 hover:bg-ink-100"
             >
-              목록 보기
+              {adminMode ? "관리" : "목록 보기"}
             </button>
           </div>
           {SCHOOLS.length === 0 ? (
@@ -451,9 +460,9 @@ export default function SubjectSearch({
           activeId={activeId}
           onSetActive={(id) => {
             handleActiveChange(id);
-            setShowSetup(false);
           }}
           onClose={() => setShowSetup(false)}
+          adminMode={adminMode}
         />
       )}
     </div>

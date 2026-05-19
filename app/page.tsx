@@ -14,6 +14,7 @@ import PrintPreview from "@/components/PrintPreview";
 import FilterChips from "@/components/FilterChips";
 import CartBar from "@/components/CartBar";
 import SubjectSearch from "@/components/SubjectSearch";
+import AdminLogin from "@/components/AdminLogin";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
 type Tab = "univ" | "subject";
@@ -36,6 +37,21 @@ export default function Home() {
     counselor: "",
     student: "",
   });
+  const [adminMode, setAdminMode] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+
+  useEffect(() => {
+    // Check admin session on mount
+    fetch("/api/admin/check", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setAdminMode(!!d.authenticated))
+      .catch(() => {});
+  }, []);
+
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
+    setAdminMode(false);
+  };
 
   useEffect(() => {
     try {
@@ -206,6 +222,7 @@ export default function Home() {
               onPick={(rows, label) =>
                 setPrinting({ kind: "single", rows, label })
               }
+              adminMode={adminMode}
             />
           )}
         </div>
@@ -229,9 +246,39 @@ export default function Home() {
         />
       )}
 
-      <footer className="no-print mx-auto max-w-6xl px-6 pb-10 pt-6 text-xs text-ink-500">
-        출처: 2028학년도 권역별 대학별 권장과목(반영과목)
+      <footer className="no-print mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6 pb-10 pt-6 text-xs text-ink-500">
+        <span>출처: 2028학년도 권역별 대학별 권장과목(반영과목)</span>
+        {adminMode ? (
+          <span className="flex items-center gap-2">
+            <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-[10px] font-bold text-indigo-700">
+              관리자 모드
+            </span>
+            <button
+              onClick={handleLogout}
+              className="text-ink-500 hover:text-ink-900 hover:underline"
+            >
+              로그아웃
+            </button>
+          </span>
+        ) : (
+          <button
+            onClick={() => setShowAdminLogin(true)}
+            className="text-ink-500 hover:text-ink-900 hover:underline"
+          >
+            관리자 로그인
+          </button>
+        )}
       </footer>
+
+      {showAdminLogin && (
+        <AdminLogin
+          onSuccess={() => {
+            setAdminMode(true);
+            setShowAdminLogin(false);
+          }}
+          onClose={() => setShowAdminLogin(false)}
+        />
+      )}
     </main>
   );
 }
