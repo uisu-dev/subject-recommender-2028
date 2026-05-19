@@ -25,3 +25,14 @@ export type File1Group = {
 export type SearchHit =
   | { kind: "univ-dept"; row: File2Row; key: string }
   | { kind: "major-group"; group: File1Group; key: string };
+
+export type HeaderInfo = {
+  schoolName: string;
+  counselor: string;
+  student: string;
+};
+
+export type CartItem = {
+  id: string;
+  row: File2Row;
+};

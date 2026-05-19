@@ -1,9 +1,26 @@
 import file1Raw from "@/data/file1.json";
 import file2Raw from "@/data/file2.json";
 import type { File1Group, File2Row } from "./types";
+import { parseRequirement, type ParsedRequirement } from "./subjects";
 
 export const file2: File2Row[] = file2Raw as File2Row[];
 export const file1: File1Group[] = file1Raw as File1Group[];
+
+export type File2RowWithParsed = File2Row & {
+  parsedCore: ParsedRequirement;
+  parsedRec: ParsedRequirement;
+};
+
+export const file2Parsed: File2RowWithParsed[] = file2.map((r) => ({
+  ...r,
+  parsedCore: parseRequirement(r.핵심과목),
+  parsedRec: parseRequirement(r.권장과목),
+}));
+
+/** Stable id for a file2 row (used by cart). */
+export function rowId(r: File2Row, idx: number): string {
+  return `${r.대학명}::${r.단과대_계열}::${r.학과}::${idx}`;
+}
 
 // Normalize for fuzzy-ish matching: remove spaces, lowercase, drop punctuation
 export function normalize(s: string): string {

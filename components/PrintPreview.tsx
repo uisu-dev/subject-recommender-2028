@@ -1,27 +1,38 @@
 "use client";
 
-import { useEffect } from "react";
-import type { File1Group, File2Row } from "@/lib/types";
+import { useEffect, useState } from "react";
+import type { CartItem, File1Group, File2Row, HeaderInfo } from "@/lib/types";
+
+type Mode =
+  | { kind: "single-file2"; rows: File2Row[]; label: string }
+  | { kind: "single-file1"; group: File1Group; label: string }
+  | { kind: "compare"; items: CartItem[] };
 
 type Props = {
-  label: string;
-  file2Rows: File2Row[];
-  file1Group: File1Group | null;
+  mode: Mode;
+  headerInfo: HeaderInfo;
+  onUpdateHeader: (h: HeaderInfo) => void;
   onClose: () => void;
 };
 
 export default function PrintPreview({
-  label,
-  file2Rows,
-  file1Group,
+  mode,
+  headerInfo,
+  onUpdateHeader,
   onClose,
 }: Props) {
+  const [draft, setDraft] = useState<HeaderInfo>(headerInfo);
+
+  useEffect(() => {
+    setDraft(headerInfo);
+  }, [headerInfo]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "p") {
         e.preventDefault();
-        window.print();
+        triggerPrint();
       }
     };
     window.addEventListener("keydown", onKey);
@@ -32,54 +43,88 @@ export default function PrintPreview({
     };
   }, [onClose]);
 
+  const isLandscape = mode.kind === "compare";
+
+  const triggerPrint = () => {
+    onUpdateHeader(draft);
+    // Toggle a class on body so print stylesheet picks orientation
+    if (isLandscape) document.body.classList.add("print-landscape");
+    else document.body.classList.remove("print-landscape");
+    setTimeout(() => window.print(), 50);
+  };
+
   const today = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
 
+  const title =
+    mode.kind === "single-file1" || mode.kind === "single-file2"
+      ? mode.label
+      : `학과 비교 (${mode.items.length}개)`;
+
   return (
     <div className="fixed inset-0 z-50">
-      {/* Overlay backdrop */}
       <div
         className="no-print absolute inset-0 bg-ink-900/60"
         onClick={onClose}
       />
 
-      {/* Top toolbar */}
-      <div className="no-print absolute inset-x-0 top-0 z-10 flex items-center justify-between border-b border-ink-200 bg-white px-6 py-3 shadow-sm">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-ink-500">
-            PDF 미리보기
-          </p>
-          <h2 className="text-base font-bold text-ink-900">{label}</h2>
+      <div className="no-print absolute inset-x-0 top-0 z-10 border-b border-ink-200 bg-white shadow-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-wider text-ink-500">
+              PDF 미리보기 {isLandscape && "· 가로"}
+            </p>
+            <h2 className="truncate text-base font-bold text-ink-900">
+              {title}
+            </h2>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              onClick={triggerPrint}
+              className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            >
+              <PrinterIcon />
+              인쇄 / PDF 저장
+            </button>
+            <button
+              onClick={onClose}
+              className="rounded-md border border-ink-200 bg-white px-4 py-2 text-sm text-ink-700 hover:bg-ink-100"
+            >
+              닫기 (Esc)
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-          >
-            <PrinterIcon />
-            인쇄 / PDF 저장
-          </button>
-          <button
-            onClick={onClose}
-            className="rounded-md border border-ink-200 bg-white px-4 py-2 text-sm text-ink-700 hover:bg-ink-100"
-          >
-            닫기 (Esc)
-          </button>
+        <div className="mx-auto grid max-w-6xl gap-3 px-6 pb-3 md:grid-cols-3">
+          <HeaderField
+            label="학교명"
+            placeholder="예: ○○고등학교"
+            value={draft.schoolName}
+            onChange={(v) => setDraft({ ...draft, schoolName: v })}
+          />
+          <HeaderField
+            label="상담교사"
+            placeholder="예: 홍길동"
+            value={draft.counselor}
+            onChange={(v) => setDraft({ ...draft, counselor: v })}
+          />
+          <HeaderField
+            label="학생"
+            placeholder="예: 김민수"
+            value={draft.student}
+            onChange={(v) => setDraft({ ...draft, student: v })}
+          />
         </div>
       </div>
 
-      {/* Scrollable preview area */}
-      <div className="absolute inset-0 overflow-auto px-4 pt-24 pb-12">
-        <div className="print-area a4-preview">
-          <PrintHeader title={label} today={today} />
-          {file1Group ? (
-            <File1Print group={file1Group} />
-          ) : (
-            <File2Print rows={file2Rows} />
-          )}
+      <div className="absolute inset-0 overflow-auto px-4 pb-12 pt-44">
+        <div className={`print-area ${isLandscape ? "a4-landscape" : "a4-preview"}`}>
+          <PrintHeader title={title} today={today} info={draft} />
+          {mode.kind === "single-file2" && <File2Print rows={mode.rows} />}
+          {mode.kind === "single-file1" && <File1Print group={mode.group} />}
+          {mode.kind === "compare" && <ComparePrint items={mode.items} />}
           <PrintFooter />
         </div>
       </div>
@@ -87,16 +132,67 @@ export default function PrintPreview({
   );
 }
 
-function PrintHeader({ title, today }: { title: string; today: string }) {
+function HeaderField({
+  label,
+  placeholder,
+  value,
+  onChange,
+}: {
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <label className="block">
+      <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-500">
+        {label}
+      </span>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="mt-0.5 w-full rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-200"
+      />
+    </label>
+  );
+}
+
+function PrintHeader({
+  title,
+  today,
+  info,
+}: {
+  title: string;
+  today: string;
+  info: HeaderInfo;
+}) {
+  const hasInfo = info.schoolName || info.counselor || info.student;
   return (
     <header className="mb-6 border-b-2 border-indigo-600 pb-4">
       <div className="flex items-baseline justify-between">
         <p className="text-xs font-semibold tracking-wider text-indigo-700">
-          2028학년도 권장과목 안내
+          {info.schoolName || "2028학년도 권장과목 안내"}
         </p>
         <p className="text-xs text-ink-500">{today}</p>
       </div>
       <h1 className="mt-1 text-2xl font-bold text-ink-900">{title}</h1>
+      {hasInfo && (
+        <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-xs text-ink-700">
+          {info.student && (
+            <span>
+              <b className="font-semibold text-ink-500">학생</b> {info.student}
+            </span>
+          )}
+          {info.counselor && (
+            <span>
+              <b className="font-semibold text-ink-500">상담교사</b>{" "}
+              {info.counselor}
+            </span>
+          )}
+        </div>
+      )}
     </header>
   );
 }
@@ -106,7 +202,7 @@ function PrintFooter() {
     <footer className="mt-8 border-t border-ink-200 pt-3 text-[10px] text-ink-500">
       <p>
         ※ 본 자료는 2028학년도 권역별 대학별 권장과목(반영과목) 및 계열별 대표
-        모집단위별 반영과목(권장과목) 자료를 바탕으로 작성되었습니다.
+        모집단위별 반영과목(권장과목)을 바탕으로 작성되었습니다.
       </p>
       <p>※ 실제 입시 시점에는 각 대학의 최신 모집요강을 반드시 확인하세요.</p>
     </footer>
@@ -118,10 +214,7 @@ function File2Print({ rows }: { rows: File2Row[] }) {
   return (
     <section className="space-y-4">
       {rows.map((r, idx) => (
-        <div
-          key={idx}
-          className="rounded-md border border-ink-200 p-4"
-        >
+        <div key={idx} className="rounded-md border border-ink-200 p-4">
           <div className="mb-2 flex items-baseline justify-between border-b border-ink-100 pb-2">
             <h3 className="text-sm font-bold text-ink-900">
               {r.대학명}
@@ -234,6 +327,104 @@ function File1Print({ group }: { group: File1Group }) {
         </tbody>
       </table>
     </section>
+  );
+}
+
+function ComparePrint({ items }: { items: CartItem[] }) {
+  const cols = items.length;
+  const widthPct = Math.floor(100 / (cols + 1));
+  return (
+    <section>
+      <p className="mb-3 text-xs text-ink-500">
+        선택한 학과 {cols}개의 권장과목을 한 페이지에 비교한 표입니다.
+      </p>
+      <table className="w-full border-collapse text-[11px]">
+        <thead>
+          <tr className="border-y-2 border-ink-700 bg-ink-50">
+            <th
+              className="w-24 px-2 py-2 text-left text-[10px] font-bold text-ink-900"
+              style={{ width: `${widthPct}%` }}
+            >
+              항목
+            </th>
+            {items.map((it) => (
+              <th
+                key={it.id}
+                className="border-l border-ink-100 px-2 py-2 text-left align-top text-[11px] font-bold text-ink-900"
+                style={{ width: `${widthPct}%` }}
+              >
+                <div>{it.row.대학명}</div>
+                <div className="text-[10px] font-normal text-ink-500">
+                  {[it.row.단과대_계열, it.row.학과]
+                    .filter(Boolean)
+                    .join(" · ") || "—"}
+                </div>
+                <div className="text-[10px] font-normal text-ink-500">
+                  {it.row.권역} · {it.row.지역}
+                </div>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          <CompareRow
+            label="핵심과목"
+            labelColor="text-indigo-700"
+            items={items}
+            value={(r) => r.핵심과목}
+          />
+          <CompareRow
+            label="권장과목"
+            labelColor="text-cyan-700"
+            items={items}
+            value={(r) => r.권장과목}
+          />
+          <CompareRow
+            label="비고"
+            labelColor="text-ink-500"
+            items={items}
+            value={(r) => r.비고}
+            small
+          />
+        </tbody>
+      </table>
+    </section>
+  );
+}
+
+function CompareRow({
+  label,
+  labelColor,
+  items,
+  value,
+  small,
+}: {
+  label: string;
+  labelColor: string;
+  items: CartItem[];
+  value: (r: File2Row) => string;
+  small?: boolean;
+}) {
+  const anyValue = items.some((it) => value(it.row));
+  if (!anyValue) return null;
+  return (
+    <tr className="border-b border-ink-100 align-top">
+      <th
+        className={`px-2 py-2 text-left text-[10px] font-bold ${labelColor}`}
+      >
+        {label}
+      </th>
+      {items.map((it) => (
+        <td
+          key={it.id}
+          className={`border-l border-ink-100 px-2 py-2 ${
+            small ? "text-[10px] text-ink-700" : "text-[11px] text-ink-900"
+          } whitespace-pre-wrap`}
+        >
+          {value(it.row) || "—"}
+        </td>
+      ))}
+    </tr>
   );
 }
 
