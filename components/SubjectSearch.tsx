@@ -165,7 +165,7 @@ export default function SubjectSearch({
 
   return (
     <div className="grid gap-4 sm:gap-6 lg:grid-cols-[320px,1fr]">
-      <aside className="space-y-3 lg:sticky lg:top-4 lg:self-start">
+      <aside className="space-y-3 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto lg:pb-2 lg:pr-1">
         <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink-900">
