@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import type { File2Row } from "@/lib/types";
 import { rowId } from "@/lib/data";
+import BulletText from "./BulletText";
 
 type Props = {
   query: string;
@@ -152,9 +153,9 @@ function RowItem({
               <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
                 핵심
               </span>
-              <span className="text-ink-700 whitespace-pre-wrap break-words">
-                {row.핵심과목}
-              </span>
+              <div className="min-w-0 flex-1 text-ink-700">
+                <BulletText text={row.핵심과목} />
+              </div>
             </div>
           )}
           {row.권장과목 && (
@@ -162,18 +163,18 @@ function RowItem({
               <span className="shrink-0 rounded bg-cyan-50 px-2 py-0.5 text-xs font-medium text-cyan-700">
                 권장
               </span>
-              <span className="text-ink-700 whitespace-pre-wrap break-words">
-                {row.권장과목}
-              </span>
+              <div className="min-w-0 flex-1 text-ink-700">
+                <BulletText text={row.권장과목} />
+              </div>
             </div>
           )}
           {!row.핵심과목 && !row.권장과목 && (
             <span className="text-ink-500">권장과목 정보 없음</span>
           )}
           {row.비고 && (
-            <p className="pt-1 text-xs text-ink-500 whitespace-pre-wrap break-words">
-              ※ {row.비고}
-            </p>
+            <div className="pt-1 text-xs text-ink-500">
+              <BulletText text={`※ ${row.비고}`} />
+            </div>
           )}
         </div>
       </div>

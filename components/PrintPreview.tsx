@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
+import BulletText from "./BulletText";
 
 type Mode =
   | { kind: "single"; rows: File2Row[]; label: string }
@@ -234,8 +235,8 @@ function File2Print({ rows }: { rows: File2Row[] }) {
                   <th className="w-20 py-1.5 pr-3 text-left text-xs font-semibold text-indigo-700">
                     핵심과목
                   </th>
-                  <td className="py-1.5 text-ink-900 whitespace-pre-wrap">
-                    {r.핵심과목}
+                  <td className="py-1.5 text-ink-900">
+                    <BulletText text={r.핵심과목} />
                   </td>
                 </tr>
               )}
@@ -244,8 +245,8 @@ function File2Print({ rows }: { rows: File2Row[] }) {
                   <th className="w-20 py-1.5 pr-3 text-left text-xs font-semibold text-cyan-700">
                     권장과목
                   </th>
-                  <td className="py-1.5 text-ink-900 whitespace-pre-wrap">
-                    {r.권장과목}
+                  <td className="py-1.5 text-ink-900">
+                    <BulletText text={r.권장과목} />
                   </td>
                 </tr>
               )}
@@ -254,8 +255,8 @@ function File2Print({ rows }: { rows: File2Row[] }) {
                   <th className="w-20 py-1.5 pr-3 text-left text-xs font-semibold text-ink-500">
                     비고
                   </th>
-                  <td className="py-1.5 text-xs text-ink-700 whitespace-pre-wrap">
-                    {r.비고}
+                  <td className="py-1.5 text-xs text-ink-700">
+                    <BulletText text={r.비고} />
                   </td>
                 </tr>
               )}

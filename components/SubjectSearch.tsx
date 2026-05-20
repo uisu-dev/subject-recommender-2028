@@ -9,6 +9,7 @@ import FilterChips from "./FilterChips";
 import { regionList, areaList } from "@/lib/data";
 import { CONTACT_EMAIL, SCHOOLS, loadActiveId, saveActiveId } from "@/lib/schools";
 import SchoolSetup from "./SchoolSetup";
+import BulletText from "./BulletText";
 
 type Props = {
   rows: File2RowWithParsed[];
@@ -422,32 +423,29 @@ export default function SubjectSearch({
                           <span className="text-ink-500">{result.reason}</span>
                         )}
                       </div>
-                      {(r.핵심과목 || r.권장과목) && (
+                      {(r.핵심과목 || r.권장과목 || r.비고) && (
                         <details className="mt-1 text-xs text-ink-700">
                           <summary className="cursor-pointer select-none text-[11px] text-ink-500 hover:text-ink-900">
                             상세 보기
                           </summary>
-                          <div className="mt-1 space-y-1">
+                          <div className="mt-1.5 space-y-2">
                             {r.핵심과목 && (
-                              <p>
-                                <b className="text-indigo-700">핵심</b>{" "}
-                                <span className="whitespace-pre-wrap break-words">
-                                  {r.핵심과목}
-                                </span>
-                              </p>
+                              <div>
+                                <b className="text-indigo-700">핵심</b>
+                                <BulletText text={r.핵심과목} />
+                              </div>
                             )}
                             {r.권장과목 && (
-                              <p>
-                                <b className="text-cyan-700">권장</b>{" "}
-                                <span className="whitespace-pre-wrap break-words">
-                                  {r.권장과목}
-                                </span>
-                              </p>
+                              <div>
+                                <b className="text-cyan-700">권장</b>
+                                <BulletText text={r.권장과목} />
+                              </div>
                             )}
                             {r.비고 && (
-                              <p className="text-[11px] text-ink-500 whitespace-pre-wrap break-words">
-                                ※ {r.비고}
-                              </p>
+                              <div className="text-[11px] text-ink-500">
+                                <b>※ 비고</b>
+                                <BulletText text={r.비고} />
+                              </div>
                             )}
                           </div>
                         </details>
