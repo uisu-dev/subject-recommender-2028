@@ -4,9 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import { SUBJECTS, domainOf, evaluateMatch, type Domain } from "@/lib/subjects";
 import type { File2Row } from "@/lib/types";
 import type { File2RowWithParsed } from "@/lib/data";
-import { rowId } from "@/lib/data";
+import {
+  rowId,
+  regionList,
+  getAreasForRegion,
+  tokenizeQuery,
+} from "@/lib/data";
 import FilterChips from "./FilterChips";
-import { regionList, areaList } from "@/lib/data";
 import { CONTACT_EMAIL, SCHOOLS, loadActiveId, saveActiveId } from "@/lib/schools";
 import SchoolSetup from "./SchoolSetup";
 import BulletText from "./BulletText";
@@ -53,9 +57,10 @@ export default function SubjectSearch({
   onPick,
   adminMode,
 }: Props) {
-  const [selected, setSelected] = useState<Set<string>>(
-    () => new Set(DEFAULT_TAKEN)
-  );
+  // Initial state is empty; mount effect populates DEFAULT_TAKEN only when
+  // no school is active. When a school is selected we keep the selection empty
+  // by design — the counselor checks what the student actually took.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [statusFilter, setStatusFilter] = useState<
     "all" | "match-only" | "match-and-open"
   >("match-and-open");
@@ -64,7 +69,10 @@ export default function SubjectSearch({
   const [showSetup, setShowSetup] = useState(false);
 
   useEffect(() => {
-    setActiveId(loadActiveId());
+    const id = loadActiveId();
+    setActiveId(id);
+    // Only seed common defaults if no school is selected at mount time
+    if (!id) setSelected(new Set(DEFAULT_TAKEN));
   }, []);
 
   const handleActiveChange = (id: string | null) => {
@@ -82,13 +90,11 @@ export default function SubjectSearch({
     [activeSchool]
   );
 
+  // When the active school changes (including initial load with a school
+  // already saved), reset selections to empty. Counselors fill in subjects
+  // per student, so prior session state should not leak between schools.
   useEffect(() => {
-    if (!offeredSet) return;
-    setSelected((prev) => {
-      const next = new Set<string>();
-      for (const s of prev) if (offeredSet.has(s)) next.add(s);
-      return next;
-    });
+    if (activeSchool) setSelected(new Set());
   }, [activeSchool?.id]);
 
   const studentDomains = useMemo(() => {
@@ -100,17 +106,19 @@ export default function SubjectSearch({
     return ds;
   }, [selected]);
 
+  const queryTokens = useMemo(() => tokenizeQuery(query), [query]);
+  const availableAreas = useMemo(() => getAreasForRegion(region), [region]);
+
   const evaluated = useMemo(() => {
     let pool = rows;
     if (region) pool = pool.filter((r) => r.권역 === region);
     if (area) pool = pool.filter((r) => r.지역 === area);
-    if (query.trim()) {
-      const q = query.trim().toLowerCase().replace(/\s+/g, "");
+    if (queryTokens.length > 0) {
       pool = pool.filter((r) => {
         const hay = `${r.대학명}${r.단과대_계열}${r.학과}`
           .toLowerCase()
           .replace(/\s+/g, "");
-        return hay.includes(q);
+        return queryTokens.every((tok) => hay.includes(tok));
       });
     }
     const out = pool.map((r) => ({
@@ -127,7 +135,7 @@ export default function SubjectSearch({
       return a.r.대학명.localeCompare(b.r.대학명, "ko");
     });
     return out;
-  }, [rows, selected, studentDomains, region, area, query]);
+  }, [rows, selected, studentDomains, region, area, queryTokens]);
 
   const filtered = useMemo(() => {
     if (statusFilter === "all") return evaluated;
@@ -154,10 +162,9 @@ export default function SubjectSearch({
   };
 
   const resetSubjects = () => {
-    if (offeredSet) {
-      const next = new Set<string>();
-      for (const s of DEFAULT_TAKEN) if (offeredSet.has(s)) next.add(s);
-      setSelected(next);
+    if (activeSchool) {
+      // For a selected school, "reset" means clear all (matches initial state)
+      setSelected(new Set());
     } else {
       setSelected(new Set(DEFAULT_TAKEN));
     }
@@ -298,7 +305,7 @@ export default function SubjectSearch({
           />
           <FilterChips
             label="지역"
-            options={areaList}
+            options={availableAreas}
             value={area}
             onChange={setArea}
           />

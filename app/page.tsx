@@ -5,7 +5,9 @@ import {
   file2Parsed,
   normalize,
   regionList,
-  areaList,
+  regionAreaMap,
+  getAreasForRegion,
+  tokenizeQuery,
   rowId,
 } from "@/lib/data";
 import SearchBox from "@/components/SearchBox";
@@ -89,20 +91,36 @@ export default function Home() {
     }
   };
 
-  const nq = normalize(query);
+  const queryTokens = useMemo(() => tokenizeQuery(query), [query]);
 
   const file2Hits = useMemo(() => {
     let pool = file2Parsed;
     if (region) pool = pool.filter((r) => r.권역 === region);
     if (area) pool = pool.filter((r) => r.지역 === area);
-    if (!nq) return [];
+    if (queryTokens.length === 0) return [];
     return pool.filter((r) => {
       const hay = normalize(
         `${r.대학명} ${r.단과대_계열} ${r.학과} ${r.권역} ${r.지역}`
       );
-      return hay.includes(nq);
+      // AND semantics: every token must appear somewhere in the haystack
+      return queryTokens.every((tok) => hay.includes(tok));
     });
-  }, [nq, region, area]);
+  }, [queryTokens, region, area]);
+
+  /**
+   * When the user picks a new 권역, drop the 지역 if it doesn't belong to that
+   * 권역. Selecting "전체" 권역 (empty string) keeps any selected 지역 because
+   * it remains valid across the full list.
+   */
+  const handleRegionChange = (next: string) => {
+    setRegion(next);
+    if (next && area) {
+      const areas = regionAreaMap.get(next);
+      if (!areas?.has(area)) setArea("");
+    }
+  };
+
+  const availableAreas = useMemo(() => getAreasForRegion(region), [region]);
 
   const cartIds = useMemo(() => new Set(cart.map((c) => c.id)), [cart]);
 
@@ -219,11 +237,11 @@ export default function Home() {
                 label="권역"
                 options={regionList}
                 value={region}
-                onChange={setRegion}
+                onChange={handleRegionChange}
               />
               <FilterChips
                 label="지역"
-                options={areaList}
+                options={availableAreas}
                 value={area}
                 onChange={setArea}
               />
@@ -253,7 +271,7 @@ export default function Home() {
               rows={file2Parsed}
               region={region}
               area={area}
-              setRegion={setRegion}
+              setRegion={handleRegionChange}
               setArea={setArea}
               cartIds={cartIds}
               onToggleCart={toggleCart}
