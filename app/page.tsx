@@ -163,10 +163,10 @@ export default function Home() {
                 <Image
                   src="/logo.png"
                   alt="대학가자.kr"
-                  width={637}
-                  height={262}
+                  width={2172}
+                  height={724}
                   priority
-                  sizes="(max-width: 640px) 180px, 240px"
+                  sizes="(max-width: 640px) 200px, 280px"
                   className="h-14 w-auto sm:h-16"
                 />
                 <span className="sr-only">대학가자.kr</span>
