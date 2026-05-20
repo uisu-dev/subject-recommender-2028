@@ -164,8 +164,8 @@ export default function SubjectSearch({
   const clearSubjects = () => setSelected(new Set());
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[320px,1fr]">
-      <aside className="lg:sticky lg:top-4 lg:self-start space-y-3">
+    <div className="grid gap-4 sm:gap-6 lg:grid-cols-[320px,1fr]">
+      <aside className="space-y-3 lg:sticky lg:top-4 lg:self-start">
         <div className="rounded-xl border border-ink-200 bg-white p-4 shadow-sm">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-bold text-ink-900">
@@ -306,7 +306,7 @@ export default function SubjectSearch({
             placeholder="대학·학과명으로 추가 필터"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="rounded-full border border-ink-200 bg-white px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
+            className="min-w-0 flex-1 rounded-full border border-ink-200 bg-white px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none sm:flex-none"
           />
         </div>
 

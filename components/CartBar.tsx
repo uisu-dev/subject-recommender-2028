@@ -13,7 +13,7 @@ export default function CartBar({ items, onRemove, onClear, onCompare }: Props) 
   if (items.length === 0) return null;
   return (
     <div className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-ink-200 bg-white/95 backdrop-blur shadow-[0_-4px_16px_rgba(15,23,42,0.06)]">
-      <div className="mx-auto flex max-w-6xl items-center gap-4 px-6 py-3">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 sm:flex-nowrap">
         <div className="flex items-center gap-2">
           <span className="rounded-full bg-indigo-600 px-2.5 py-1 text-xs font-bold text-white">
             {items.length}

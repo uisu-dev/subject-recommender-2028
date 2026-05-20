@@ -195,7 +195,7 @@ export default function SchoolSetup({
   return (
     <div className="fixed inset-0 z-[60]">
       <div className="absolute inset-0 bg-ink-900/60" onClick={onClose} />
-      <div className="absolute inset-x-4 top-1/2 mx-auto max-w-5xl -translate-y-1/2 overflow-hidden rounded-xl bg-white shadow-2xl">
+      <div className="absolute inset-x-2 top-4 bottom-4 mx-auto flex max-w-5xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl sm:inset-x-4 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2">
         <header className="flex items-start justify-between gap-3 border-b border-ink-200 bg-ink-50 px-5 py-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
@@ -241,8 +241,8 @@ export default function SchoolSetup({
           </div>
         </header>
 
-        <div className="grid h-[600px] grid-cols-[260px,1fr]">
-          <aside className="overflow-y-auto border-r border-ink-200 bg-ink-50/40 p-3">
+        <div className="grid flex-1 grid-rows-[auto,1fr] sm:h-[600px] sm:grid-cols-[260px,1fr] sm:grid-rows-1">
+          <aside className="overflow-y-auto border-b border-ink-200 bg-ink-50/40 p-3 sm:border-b-0 sm:border-r sm:max-h-none max-h-48">
             {adminMode && (
               <button
                 onClick={handleAdd}
@@ -327,7 +327,7 @@ export default function SchoolSetup({
             )}
           </aside>
 
-          <section className="overflow-y-auto p-5">
+          <section className="overflow-y-auto p-4 sm:p-5">
             {!viewing ? (
               <div className="flex h-full items-center justify-center text-center">
                 <p className="text-sm text-ink-500">

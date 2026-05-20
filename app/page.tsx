@@ -118,13 +118,13 @@ export default function Home() {
   return (
     <main className="min-h-screen pb-32">
       <header className="no-print bg-white border-b border-ink-200">
-        <div className="mx-auto flex max-w-6xl items-start justify-between gap-6 px-6 py-6">
+        <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6 sm:py-6 md:flex-row md:items-start md:justify-between md:gap-6">
           <div className="min-w-0">
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-2xl font-bold text-ink-900">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h1 className="text-xl font-bold text-ink-900 sm:text-2xl">
                 2028 권장과목 검색
               </h1>
-              <span className="text-sm text-ink-500">
+              <span className="text-xs text-ink-500 sm:text-sm">
                 대학 · 학과별 반영과목 안내
               </span>
             </div>
@@ -133,10 +133,10 @@ export default function Home() {
               학과를 역검색할 수 있습니다.
             </p>
           </div>
-          <aside className="shrink-0 rounded-lg border border-ink-200 bg-ink-50/60 px-4 py-2 text-right text-[11px] leading-relaxed text-ink-700">
+          <aside className="rounded-lg border border-ink-200 bg-ink-50/60 px-4 py-2 text-[11px] leading-relaxed text-ink-700 md:shrink-0 md:text-right">
             <p className="font-semibold text-ink-500">개발 및 문의</p>
-            <p>
-              배방고등학교 교사 김혜진{" "}
+            <p className="flex flex-wrap gap-x-1.5 md:justify-end">
+              <span>배방고등학교 교사 김혜진</span>
               <a
                 href="mailto:rmeosahf@naver.com"
                 className="text-indigo-700 hover:underline"
@@ -144,8 +144,8 @@ export default function Home() {
                 rmeosahf@naver.com
               </a>
             </p>
-            <p>
-              천안중학교 교사 임의수{" "}
+            <p className="flex flex-wrap gap-x-1.5 md:justify-end">
+              <span>천안중학교 교사 임의수</span>
               <a
                 href="mailto:uisu@kakao.com"
                 className="text-indigo-700 hover:underline"
@@ -157,8 +157,8 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="no-print mx-auto max-w-6xl px-6 py-6">
-        <div className="inline-flex rounded-lg border border-ink-200 bg-white p-1 shadow-sm">
+      <section className="no-print mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6">
+        <div className="inline-flex w-full rounded-lg border border-ink-200 bg-white p-1 shadow-sm sm:w-auto">
           <TabButton
             active={tab === "univ"}
             onClick={() => setTab("univ")}
@@ -246,7 +246,7 @@ export default function Home() {
         />
       )}
 
-      <footer className="no-print mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-6 pb-10 pt-6 text-xs text-ink-500">
+      <footer className="no-print mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 pb-10 pt-6 text-xs text-ink-500 sm:px-6">
         <span>출처: 2028학년도 권역별 대학별 권장과목(반영과목)</span>
         {adminMode ? (
           <span className="flex items-center gap-2">
@@ -297,7 +297,7 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium rounded-md transition ${
+      className={`flex-1 whitespace-nowrap rounded-md px-3 py-2 text-xs font-medium transition sm:flex-none sm:px-4 sm:text-sm ${
         active ? "bg-indigo-600 text-white" : "text-ink-700 hover:bg-ink-100"
       }`}
     >

@@ -60,27 +60,37 @@ body.print-landscape .print-area {
   page: landscape-page;
 }
 
-/* PDF preview shell mimics A4 ratio */
+/* PDF preview shell mimics A4 ratio. On small screens the padding shrinks
+   so content doesn't overflow horizontally. */
 .a4-preview {
   width: 100%;
   max-width: 794px; /* ~A4 width at 96dpi */
   min-height: 1100px;
   background: white;
   margin: 0 auto;
-  padding: 40px 36px;
+  padding: 20px 16px;
   box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
   border-radius: 6px;
 }
 
 .a4-landscape {
   width: 100%;
-  max-width: 1123px; /* ~A4 landscape width at 96dpi */
+  max-width: 1123px;
   min-height: 794px;
   background: white;
   margin: 0 auto;
-  padding: 30px 36px;
+  padding: 20px 16px;
   box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
   border-radius: 6px;
+}
+
+@media (min-width: 640px) {
+  .a4-preview {
+    padding: 40px 36px;
+  }
+  .a4-landscape {
+    padding: 30px 36px;
+  }
 }
 
 /* PDF preview shell mimics A4 ratio */

@@ -68,9 +68,9 @@ export default function UnivDeptResults({
           key={g.대학명}
           className="rounded-xl border border-ink-200 bg-white shadow-sm"
         >
-          <header className="flex items-center justify-between border-b border-ink-100 px-5 py-3">
-            <div>
-              <h3 className="font-semibold text-ink-900">{g.대학명}</h3>
+          <header className="flex items-center justify-between gap-3 border-b border-ink-100 px-4 py-3 sm:px-5">
+            <div className="min-w-0">
+              <h3 className="truncate font-semibold text-ink-900">{g.대학명}</h3>
               <p className="text-xs text-ink-500">
                 {g.권역} · {g.지역} · {g.rows.length}개 모집단위
               </p>
@@ -82,7 +82,7 @@ export default function UnivDeptResults({
                   g.대학명
                 )
               }
-              className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700"
+              className="shrink-0 rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700"
             >
               전체 출력
             </button>
@@ -126,58 +126,56 @@ function RowItem({
 }) {
   const deptLabel = [row.단과대_계열, row.학과].filter(Boolean).join(" · ");
   return (
-    <div className="grid grid-cols-12 gap-3 px-5 py-3 hover:bg-ink-50/50">
-      <div className="col-span-1 flex items-start pt-0.5">
-        <label className="inline-flex cursor-pointer items-center">
-          <input
-            type="checkbox"
-            checked={inCart}
-            onChange={onToggleCart}
-            className="h-4 w-4 cursor-pointer rounded border-ink-300 text-indigo-600 focus:ring-indigo-500"
-            aria-label="비교 카트에 추가"
-          />
-        </label>
-      </div>
-      <div className="col-span-3 text-sm font-medium text-ink-900">
-        {deptLabel || "—"}
-      </div>
-      <div className="col-span-7 space-y-1.5 text-sm">
-        {row.핵심과목 && (
-          <div className="flex gap-2">
-            <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
-              핵심
-            </span>
-            <span className="text-ink-700 whitespace-pre-wrap">
-              {row.핵심과목}
-            </span>
+    <div className="flex items-start gap-3 px-4 py-3 hover:bg-ink-50/50 sm:px-5">
+      <input
+        type="checkbox"
+        checked={inCart}
+        onChange={onToggleCart}
+        className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded border-ink-300 text-indigo-600 focus:ring-indigo-500"
+        aria-label="비교 카트에 추가"
+      />
+      <div className="min-w-0 flex-1">
+        <div className="flex items-baseline justify-between gap-2">
+          <div className="min-w-0 text-sm font-medium text-ink-900">
+            {deptLabel || "—"}
           </div>
-        )}
-        {row.권장과목 && (
-          <div className="flex gap-2">
-            <span className="shrink-0 rounded bg-cyan-50 px-2 py-0.5 text-xs font-medium text-cyan-700">
-              권장
-            </span>
-            <span className="text-ink-700 whitespace-pre-wrap">
-              {row.권장과목}
-            </span>
-          </div>
-        )}
-        {!row.핵심과목 && !row.권장과목 && (
-          <span className="text-ink-500">권장과목 정보 없음</span>
-        )}
-        {row.비고 && (
-          <p className="pt-1 text-xs text-ink-500 whitespace-pre-wrap">
-            ※ {row.비고}
-          </p>
-        )}
-      </div>
-      <div className="col-span-1 text-right">
-        <button
-          onClick={onPrint}
-          className="text-xs text-indigo-600 hover:underline"
-        >
-          출력
-        </button>
+          <button
+            onClick={onPrint}
+            className="shrink-0 text-xs text-indigo-600 hover:underline"
+          >
+            출력
+          </button>
+        </div>
+        <div className="mt-1.5 space-y-1.5 text-sm">
+          {row.핵심과목 && (
+            <div className="flex gap-2">
+              <span className="shrink-0 rounded bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                핵심
+              </span>
+              <span className="text-ink-700 whitespace-pre-wrap break-words">
+                {row.핵심과목}
+              </span>
+            </div>
+          )}
+          {row.권장과목 && (
+            <div className="flex gap-2">
+              <span className="shrink-0 rounded bg-cyan-50 px-2 py-0.5 text-xs font-medium text-cyan-700">
+                권장
+              </span>
+              <span className="text-ink-700 whitespace-pre-wrap break-words">
+                {row.권장과목}
+              </span>
+            </div>
+          )}
+          {!row.핵심과목 && !row.권장과목 && (
+            <span className="text-ink-500">권장과목 정보 없음</span>
+          )}
+          {row.비고 && (
+            <p className="pt-1 text-xs text-ink-500 whitespace-pre-wrap break-words">
+              ※ {row.비고}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
