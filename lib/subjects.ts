@@ -91,6 +91,12 @@ export const SUBJECTS: SubjectDef[] = [
     aliases: ["실생활 영어 회화", "실생활영어 회화"],
     domain: "영어",
   },
+  { name: "미디어 영어", aliases: ["미디어 영어", "미디어영어"], domain: "영어" },
+  {
+    name: "세계 문화와 영어",
+    aliases: ["세계 문화와 영어", "세계문화와 영어"],
+    domain: "영어",
+  },
 
   // ===== 사회 — 일반사회/정치/경제/법 =====
   { name: "일반사회", aliases: ["일반사회", "일반 사회"], domain: "사회" },
@@ -107,6 +113,21 @@ export const SUBJECTS: SubjectDef[] = [
     aliases: ["사회문제 탐구", "사회문제탐구"],
     domain: "사회",
   },
+  {
+    name: "국제 관계의 이해",
+    aliases: ["국제 관계의 이해", "국제관계의 이해"],
+    domain: "사회",
+  },
+  {
+    name: "금융과 경제생활",
+    aliases: ["금융과 경제생활", "금융과경제생활"],
+    domain: "사회",
+  },
+  {
+    name: "기후변화와 지속가능한 세계",
+    aliases: ["기후변화와 지속가능한 세계", "기후변화와지속가능한 세계"],
+    domain: "사회",
+  },
 
   // ===== 사회 — 역사 =====
   { name: "역사", aliases: ["역사"], domain: "사회" },
@@ -114,6 +135,11 @@ export const SUBJECTS: SubjectDef[] = [
   {
     name: "동아시아 역사 기행",
     aliases: ["동아시아 역사 기행", "동아시아역사 기행"],
+    domain: "사회",
+  },
+  {
+    name: "역사로 탐구하는 현대 세계",
+    aliases: ["역사로 탐구하는 현대 세계", "역사로탐구하는 현대 세계"],
     domain: "사회",
   },
 
@@ -132,6 +158,11 @@ export const SUBJECTS: SubjectDef[] = [
     domain: "사회",
   },
   { name: "여행지리", aliases: ["여행지리"], domain: "사회" },
+  {
+    name: "세계시민과 지리",
+    aliases: ["세계시민과 지리", "세계시민과지리"],
+    domain: "사회",
+  },
 
   // ===== 사회 — 윤리/도덕 =====
   { name: "윤리", aliases: ["윤리"], domain: "사회" },
@@ -151,6 +182,11 @@ export const SUBJECTS: SubjectDef[] = [
     domain: "사회",
   },
   { name: "도덕", aliases: ["도덕"], domain: "사회" },
+  {
+    name: "윤리문제 탐구",
+    aliases: ["윤리문제 탐구", "윤리문제탐구"],
+    domain: "사회",
+  },
 
   // ===== 과학 — 물리 =====
   { name: "물리학", aliases: ["물리학", "물리"], domain: "과학" },
@@ -256,6 +292,71 @@ export const SUBJECTS: SubjectDef[] = [
   },
   { name: "정보", aliases: ["정보"], domain: "기타" },
   { name: "교양", aliases: ["교양"], domain: "기타" },
+
+  // ===== 기타 — 체육 진로·융합선택 =====
+  { name: "스포츠 과학", aliases: ["스포츠 과학", "스포츠과학"], domain: "기타" },
+  { name: "스포츠 문화", aliases: ["스포츠 문화", "스포츠문화"], domain: "기타" },
+  { name: "스포츠 생활", aliases: ["스포츠 생활", "스포츠생활", "스포츠 생활1", "스포츠 생활2"], domain: "기타" },
+  { name: "운동과 건강", aliases: ["운동과 건강", "운동과건강"], domain: "기타" },
+
+  // ===== 기타 — 예술 진로·융합선택 =====
+  {
+    name: "음악 연주와 창작",
+    aliases: ["음악 연주와 창작", "음악연주와 창작"],
+    domain: "기타",
+  },
+  { name: "미술 창작", aliases: ["미술 창작", "미술창작"], domain: "기타" },
+  {
+    name: "미술 감상과 비평",
+    aliases: ["미술 감상과 비평", "미술감상과 비평"],
+    domain: "기타",
+  },
+
+  // ===== 기타 — 기술·가정 진로·융합선택 =====
+  {
+    name: "로봇과 공학세계",
+    aliases: ["로봇과 공학세계", "로봇과공학세계"],
+    domain: "기타",
+  },
+  {
+    name: "생활과학 탐구",
+    aliases: ["생활과학 탐구", "생활과학탐구"],
+    domain: "기타",
+  },
+  {
+    name: "창의 공학 설계",
+    aliases: ["창의 공학 설계", "창의공학 설계"],
+    domain: "기타",
+  },
+  {
+    name: "아동발달과 부모",
+    aliases: ["아동발달과 부모", "아동발달과부모"],
+    domain: "기타",
+  },
+
+  // ===== 기타 — 정보 진로·융합선택 =====
+  { name: "데이터 과학", aliases: ["데이터 과학", "데이터과학"], domain: "기타" },
+  { name: "정보과학", aliases: ["정보과학", "정보 과학"], domain: "기타" },
+  {
+    name: "인공지능 기초",
+    aliases: ["인공지능 기초", "인공지능기초"],
+    domain: "기타",
+  },
+  { name: "프로그래밍", aliases: ["프로그래밍"], domain: "기타" },
+  {
+    name: "소프트웨어와 생활",
+    aliases: ["소프트웨어와 생활", "소프트웨어와생활"],
+    domain: "기타",
+  },
+
+  // ===== 기타 — 외국어/한문 진로·융합선택 =====
+  { name: "중국어 회화", aliases: ["중국어 회화", "중국어회화"], domain: "기타" },
+  { name: "중국 문화", aliases: ["중국 문화", "중국문화"], domain: "기타" },
+  {
+    name: "언어생활과 한자",
+    aliases: ["언어생활과 한자", "언어생활과한자"],
+    domain: "기타",
+  },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
