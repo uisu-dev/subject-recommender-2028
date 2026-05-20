@@ -57,9 +57,9 @@ export default function SubjectSearch({
   onPick,
   adminMode,
 }: Props) {
-  // Initial state is empty; mount effect populates DEFAULT_TAKEN only when
-  // no school is active. When a school is selected we keep the selection empty
-  // by design — the counselor checks what the student actually took.
+  // Initial state is always empty — counselors check what the student
+  // actually took. The "기본값" button remains available as a manual shortcut
+  // to load DEFAULT_TAKEN when desired.
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [statusFilter, setStatusFilter] = useState<
     "all" | "match-only" | "match-and-open"
@@ -69,10 +69,7 @@ export default function SubjectSearch({
   const [showSetup, setShowSetup] = useState(false);
 
   useEffect(() => {
-    const id = loadActiveId();
-    setActiveId(id);
-    // Only seed common defaults if no school is selected at mount time
-    if (!id) setSelected(new Set(DEFAULT_TAKEN));
+    setActiveId(loadActiveId());
   }, []);
 
   const handleActiveChange = (id: string | null) => {
