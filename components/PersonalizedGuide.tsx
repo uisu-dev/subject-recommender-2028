@@ -19,6 +19,9 @@ import {
 import {
   CONTACT_EMAIL,
   SCHOOLS,
+  SCHOOL_REGIONS,
+  getSchoolsByRegion,
+  getRegionOfSchool,
   loadActiveId,
   saveActiveId,
   loadTakenSubjects,
@@ -62,6 +65,7 @@ export default function PersonalizedGuide({
   adminMode,
 }: Props) {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [schoolRegion, setSchoolRegion] = useState<string>("");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showSetup, setShowSetup] = useState(false);
   const [query, setQuery] = useState("");
@@ -70,9 +74,27 @@ export default function PersonalizedGuide({
   );
 
   useEffect(() => {
-    setActiveId(loadActiveId());
+    const id = loadActiveId();
+    setActiveId(id);
+    setSchoolRegion(getRegionOfSchool(id));
     setSelected(loadTakenSubjects());
   }, []);
+
+  const schoolsInRegion = useMemo(
+    () => getSchoolsByRegion(schoolRegion),
+    [schoolRegion]
+  );
+
+  const handleSchoolRegionChange = (next: string) => {
+    setSchoolRegion(next);
+    // Clear school if current school doesn't belong to the new region
+    if (next && activeId) {
+      const stillValid = SCHOOLS.some(
+        (s) => s.id === activeId && s.region === next
+      );
+      if (!stillValid) handleActiveChange(null);
+    }
+  };
 
   useEffect(() => {
     saveTakenSubjects(selected);
@@ -81,6 +103,11 @@ export default function PersonalizedGuide({
   const handleActiveChange = (id: string | null) => {
     setActiveId(id);
     saveActiveId(id);
+    // Keep schoolRegion in sync when picking a real school (not on clear)
+    if (id) {
+      const r = getRegionOfSchool(id);
+      if (r) setSchoolRegion(r);
+    }
     setSelected(new Set());
     saveTakenSubjects(new Set());
   };
@@ -161,23 +188,46 @@ export default function PersonalizedGuide({
               {adminMode ? "관리" : "목록 보기"}
             </button>
           </div>
-          <label className="block">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
-              고등학교
-            </span>
-            <select
-              value={activeId ?? ""}
-              onChange={(e) => handleActiveChange(e.target.value || null)}
-              className="mt-1 w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
-            >
-              <option value="">학교 선택 안 함</option>
-              {SCHOOLS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
+          <div className="space-y-2">
+            <label className="block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
+                지역
+              </span>
+              <select
+                value={schoolRegion}
+                onChange={(e) => handleSchoolRegionChange(e.target.value)}
+                className="mt-1 w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+              >
+                <option value="">전체 지역</option>
+                {SCHOOL_REGIONS.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="block">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
+                고등학교
+              </span>
+              <select
+                value={activeId ?? ""}
+                onChange={(e) => handleActiveChange(e.target.value || null)}
+                className="mt-1 w-full rounded-md border border-ink-200 bg-white px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+              >
+                <option value="">
+                  {schoolRegion
+                    ? `${schoolRegion} 학교 선택…`
+                    : "학교 선택 안 함"}
                 </option>
-              ))}
-            </select>
-          </label>
+                {schoolsInRegion.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           {activeSchool && (
             <p className="mt-2 text-[10px] text-ink-500">
               개설 {activeSchool.offeredSubjects.length}과목

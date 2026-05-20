@@ -15,6 +15,9 @@ import FilterChips from "./FilterChips";
 import {
   CONTACT_EMAIL,
   SCHOOLS,
+  SCHOOL_REGIONS,
+  getSchoolsByRegion,
+  getRegionOfSchool,
   loadActiveId,
   saveActiveId,
   loadTakenSubjects,
@@ -74,6 +77,7 @@ export default function SubjectSearch({
   >("match-and-open");
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [schoolRegion, setSchoolRegion] = useState<string>("");
   const [showSetup, setShowSetup] = useState(false);
   // Default to all-collapsed — users requested less visual clutter on entry
   const [collapsedDomains, setCollapsedDomains] = useState<Set<Domain>>(
@@ -81,7 +85,9 @@ export default function SubjectSearch({
   );
 
   useEffect(() => {
-    setActiveId(loadActiveId());
+    const id = loadActiveId();
+    setActiveId(id);
+    setSchoolRegion(getRegionOfSchool(id));
     // Restore subjects shared with 맞춤형 진학지도 tab via localStorage
     const persisted = loadTakenSubjects();
     if (persisted.size > 0) setSelected(persisted);
@@ -91,6 +97,21 @@ export default function SubjectSearch({
   useEffect(() => {
     saveTakenSubjects(selected);
   }, [selected]);
+
+  const schoolsInRegion = useMemo(
+    () => getSchoolsByRegion(schoolRegion),
+    [schoolRegion]
+  );
+
+  const handleSchoolRegionChange = (next: string) => {
+    setSchoolRegion(next);
+    if (next && activeId) {
+      const stillValid = SCHOOLS.some(
+        (s) => s.id === activeId && s.region === next
+      );
+      if (!stillValid) handleActiveChange(null);
+    }
+  };
 
   const toggleDomain = (d: Domain) => {
     setCollapsedDomains((prev) => {
@@ -106,6 +127,10 @@ export default function SubjectSearch({
   const handleActiveChange = (id: string | null) => {
     setActiveId(id);
     saveActiveId(id);
+    if (id) {
+      const r = getRegionOfSchool(id);
+      if (r) setSchoolRegion(r);
+    }
   };
 
   const activeSchool = useMemo(
@@ -230,18 +255,38 @@ export default function SubjectSearch({
               </a>
             </p>
           ) : (
-            <select
-              value={activeId ?? ""}
-              onChange={(e) => handleActiveChange(e.target.value || null)}
-              className="w-full rounded-md border border-ink-200 bg-white px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
-            >
-              <option value="">전체 과목 표시 (학교 미선택)</option>
-              {SCHOOLS.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
+            <div className="space-y-1.5">
+              <select
+                value={schoolRegion}
+                onChange={(e) => handleSchoolRegionChange(e.target.value)}
+                className="w-full rounded-md border border-ink-200 bg-white px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
+                aria-label="지역"
+              >
+                <option value="">전체 지역</option>
+                {SCHOOL_REGIONS.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={activeId ?? ""}
+                onChange={(e) => handleActiveChange(e.target.value || null)}
+                className="w-full rounded-md border border-ink-200 bg-white px-2 py-1.5 text-sm focus:border-indigo-500 focus:outline-none"
+                aria-label="학교"
+              >
+                <option value="">
+                  {schoolRegion
+                    ? `${schoolRegion} 학교 선택…`
+                    : "전체 과목 표시 (학교 미선택)"}
                 </option>
-              ))}
-            </select>
+                {schoolsInRegion.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           )}
           {activeSchool && (
             <p className="mt-2 text-[10px] text-ink-500">

@@ -107,6 +107,20 @@ export default function SchoolSetup({
         .sort((a, b) => a.name.localeCompare(b.name, "ko")),
     [adminMode, drafts]
   );
+  // Group schools by region for the sidebar list. Schools missing a region
+  // fall under "기타".
+  const listByRegion = useMemo(() => {
+    const groups = new Map<string, HighSchool[]>();
+    for (const s of list) {
+      const r = (s as HighSchool).region || "기타";
+      if (!groups.has(r)) groups.set(r, []);
+      groups.get(r)!.push(s);
+    }
+    // Sort region keys (가나다)
+    return Array.from(groups.entries()).sort((a, b) =>
+      a[0].localeCompare(b[0], "ko")
+    );
+  }, [list]);
   const viewing = list.find((s) => s.id === viewingId) || null;
 
   // Admin operations
@@ -119,6 +133,7 @@ export default function SchoolSetup({
     const newSchool: HighSchool = {
       id: slugify(name),
       name,
+      region: "기타",
       offeredSubjects: [...COMMON_OFFERED_DEFAULT],
     };
     setDrafts((prev) => [...prev, newSchool]);
@@ -137,6 +152,11 @@ export default function SchoolSetup({
   const updateName = (name: string) => {
     if (!viewing) return;
     updateDraft({ ...viewing, name });
+  };
+
+  const updateRegion = (region: string) => {
+    if (!viewing) return;
+    updateDraft({ ...viewing, region });
   };
 
   const toggleSubject = (name: string) => {
@@ -269,19 +289,28 @@ export default function SchoolSetup({
                 {adminMode ? "위 버튼으로 학교를 추가하세요." : "아직 등록된 학교가 없습니다."}
               </p>
             ) : (
-              <ul className="space-y-1">
-                {list.map((s) => {
-                  const active = s.id === activeId;
-                  const isViewing = s.id === viewingId;
-                  return (
-                    <li key={s.id}>
-                      <div
-                        className={`group flex items-center gap-1 rounded-md border px-2 py-1.5 ${
-                          isViewing
-                            ? "border-indigo-500 bg-white shadow-sm"
-                            : "border-transparent bg-white/60 hover:bg-white"
-                        }`}
-                      >
+              <div className="space-y-3">
+                {listByRegion.map(([region, schools]) => (
+                  <div key={region}>
+                    <p className="mb-1 px-1 text-[10px] font-bold uppercase tracking-wider text-ink-500">
+                      {region}{" "}
+                      <span className="font-normal text-ink-400">
+                        ({schools.length})
+                      </span>
+                    </p>
+                    <ul className="space-y-1">
+                      {schools.map((s) => {
+                        const active = s.id === activeId;
+                        const isViewing = s.id === viewingId;
+                        return (
+                          <li key={s.id}>
+                            <div
+                              className={`group flex items-center gap-1 rounded-md border px-2 py-1.5 ${
+                                isViewing
+                                  ? "border-indigo-500 bg-white shadow-sm"
+                                  : "border-transparent bg-white/60 hover:bg-white"
+                              }`}
+                            >
                         <button
                           onClick={() => setViewingId(s.id)}
                           className="min-w-0 flex-1 truncate text-left text-sm font-medium text-ink-900"
@@ -314,11 +343,14 @@ export default function SchoolSetup({
                             ✕
                           </button>
                         )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             )}
 
             {!adminMode && (
@@ -351,6 +383,7 @@ export default function SchoolSetup({
               <AdminEditPanel
                 school={viewing}
                 onNameChange={updateName}
+                onRegionChange={updateRegion}
                 onToggleSubject={toggleSubject}
                 onToggleAllInDomain={toggleAllInDomain}
               />
@@ -367,17 +400,19 @@ export default function SchoolSetup({
 function AdminEditPanel({
   school,
   onNameChange,
+  onRegionChange,
   onToggleSubject,
   onToggleAllInDomain,
 }: {
   school: HighSchool;
   onNameChange: (name: string) => void;
+  onRegionChange: (region: string) => void;
   onToggleSubject: (name: string) => void;
   onToggleAllInDomain: (domain: Domain, on: boolean) => void;
 }) {
   return (
     <>
-      <div className="mb-4">
+      <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr,180px]">
         <label className="block">
           <span className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
             학교명
@@ -389,6 +424,24 @@ function AdminEditPanel({
             className="mt-0.5 w-full rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-200"
             placeholder="예: 배방고등학교"
           />
+        </label>
+        <label className="block">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
+            지역
+          </span>
+          <input
+            type="text"
+            value={school.region || ""}
+            onChange={(e) => onRegionChange(e.target.value)}
+            className="mt-0.5 w-full rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-200"
+            placeholder="예: 아산시"
+            list="school-region-suggestions"
+          />
+          <datalist id="school-region-suggestions">
+            <option value="아산시" />
+            <option value="천안시" />
+            <option value="기타" />
+          </datalist>
         </label>
       </div>
 

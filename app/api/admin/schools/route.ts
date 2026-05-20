@@ -13,16 +13,30 @@ const BRANCH = "main";
 type IncomingSchool = {
   id?: unknown;
   name?: unknown;
+  region?: unknown;
   offeredSubjects?: unknown;
 };
 
 function validateSchools(raw: unknown):
-  | { ok: true; schools: Array<{ id: string; name: string; offeredSubjects: string[] }> }
+  | {
+      ok: true;
+      schools: Array<{
+        id: string;
+        name: string;
+        region: string;
+        offeredSubjects: string[];
+      }>;
+    }
   | { ok: false; error: string } {
   if (!Array.isArray(raw)) return { ok: false, error: "schools는 배열이어야 합니다." };
   const validSubjectNames = new Set(SUBJECTS.map((s) => s.name));
   const ids = new Set<string>();
-  const cleaned: Array<{ id: string; name: string; offeredSubjects: string[] }> = [];
+  const cleaned: Array<{
+    id: string;
+    name: string;
+    region: string;
+    offeredSubjects: string[];
+  }> = [];
   for (const item of raw as IncomingSchool[]) {
     if (
       !item ||
@@ -37,6 +51,10 @@ function validateSchools(raw: unknown):
     const id = item.id.trim();
     if (ids.has(id)) return { ok: false, error: `중복된 id: ${id}` };
     ids.add(id);
+    const region =
+      typeof item.region === "string" && item.region.trim()
+        ? item.region.trim().slice(0, 40)
+        : "기타";
     const subjects: string[] = [];
     for (const subj of item.offeredSubjects) {
       if (typeof subj !== "string") {
@@ -47,7 +65,12 @@ function validateSchools(raw: unknown):
       }
       subjects.push(subj);
     }
-    cleaned.push({ id, name: item.name.trim(), offeredSubjects: subjects });
+    cleaned.push({
+      id,
+      name: item.name.trim(),
+      region,
+      offeredSubjects: subjects,
+    });
   }
   return { ok: true, schools: cleaned };
 }

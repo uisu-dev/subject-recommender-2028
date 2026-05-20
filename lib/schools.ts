@@ -14,6 +14,8 @@ import schoolsData from "@/data/schools.json";
 export type HighSchool = {
   id: string;
   name: string;
+  /** Region/city the school belongs to — e.g., "아산시", "천안시". */
+  region: string;
   /** Canonical subject names (from SUBJECTS in lib/subjects.ts) offered by this school. */
   offeredSubjects: string[];
 };
@@ -21,6 +23,26 @@ export type HighSchool = {
 export const SCHOOLS: HighSchool[] = (schoolsData as HighSchool[])
   .slice()
   .sort((a, b) => a.name.localeCompare(b.name, "ko"));
+
+/** Distinct region names, alphabetical (가나다순). */
+export const SCHOOL_REGIONS: string[] = Array.from(
+  new Set(SCHOOLS.map((s) => s.region).filter(Boolean))
+).sort((a, b) => a.localeCompare(b, "ko"));
+
+/** Schools in a specific region (가나다순). If region is empty, returns all. */
+export function getSchoolsByRegion(region: string): HighSchool[] {
+  const list = region ? SCHOOLS.filter((s) => s.region === region) : SCHOOLS;
+  return list
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name, "ko"));
+}
+
+/** Find the region of a school by id. Returns empty string if not found. */
+export function getRegionOfSchool(id: string | null): string {
+  if (!id) return "";
+  const s = SCHOOLS.find((x) => x.id === id);
+  return s ? s.region : "";
+}
 
 const ACTIVE_KEY = "subject-recommender:active-school";
 
