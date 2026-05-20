@@ -154,6 +154,10 @@ export default function Home() {
                 uisu@kakao.com
               </a>
             </p>
+            <p className="mt-2 font-semibold text-ink-500">검수</p>
+            <p>이재훈 선생님(한민고)</p>
+            <p>안석환 선생님(대일외고)</p>
+            <p>이민호 선생님(김천고)</p>
           </aside>
         </div>
       </header>
