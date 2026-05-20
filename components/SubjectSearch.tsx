@@ -352,97 +352,108 @@ export default function SubjectSearch({
               return (
                 <li
                   key={id}
-                  className="flex items-start gap-3 rounded-lg border border-ink-200 bg-white p-3 shadow-sm"
+                  className="rounded-lg border border-ink-200 bg-white p-3 shadow-sm"
                 >
-                  <input
-                    type="checkbox"
-                    checked={inCart}
-                    onChange={() => onToggleCart(r, origIdx)}
-                    className="mt-1 h-4 w-4 cursor-pointer rounded border-ink-300 text-indigo-600 focus:ring-indigo-500"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-baseline gap-2">
-                      <h4 className="text-sm font-bold text-ink-900">
-                        {r.대학명}
-                      </h4>
-                      <span className="text-xs text-ink-700">· {dept}</span>
-                      <StatusBadge status={result.status} />
-                      <span className="ml-auto text-[10px] text-ink-500">
-                        {r.권역} · {r.지역}
-                      </span>
+                  <div className="flex items-start gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={inCart}
+                      onChange={() => onToggleCart(r, origIdx)}
+                      className="mt-1 h-4 w-4 shrink-0 cursor-pointer rounded border-ink-300 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <div className="min-w-0 flex-1">
+                      {/* Title: school + dept, with print button on the right */}
+                      <div className="flex items-baseline justify-between gap-2">
+                        <h4 className="min-w-0 text-sm leading-snug text-ink-900">
+                          <span className="font-bold">{r.대학명}</span>
+                          {dept !== "—" && (
+                            <span className="ml-1 font-normal text-ink-700">
+                              · {dept}
+                            </span>
+                          )}
+                        </h4>
+                        <button
+                          onClick={() =>
+                            onPick(
+                              [r],
+                              `${r.대학명} · ${r.학과 || r.단과대_계열}`
+                            )
+                          }
+                          className="shrink-0 text-xs text-indigo-600 hover:underline"
+                        >
+                          출력
+                        </button>
+                      </div>
+                      {/* Meta row: badge + region */}
+                      <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                        <StatusBadge status={result.status} />
+                        <span className="text-[10px] text-ink-500">
+                          {r.권역} · {r.지역}
+                        </span>
+                      </div>
+                      {/* Match result */}
+                      <div className="mt-1.5 text-xs text-ink-700">
+                        {result.status === "ok" && (
+                          <span className="text-emerald-700">
+                            핵심과목 요건 충족 ({result.coreMet}/{result.coreTotal}
+                            ){result.recTotal > 0 &&
+                              ` · 권장 ${result.recMet}/${result.recTotal}`}
+                          </span>
+                        )}
+                        {result.status === "open" && (
+                          <span className="text-emerald-600">
+                            {result.reason}
+                            {result.recTotal > 0 &&
+                              ` · 권장 ${result.recMet}/${result.recTotal}`}
+                          </span>
+                        )}
+                        {result.status === "partial" && (
+                          <span className="text-amber-700">
+                            핵심 {result.coreMet}/{result.coreTotal} · 부족:{" "}
+                            {result.missingCore.join(", ")}
+                          </span>
+                        )}
+                        {result.status === "unmet" && (
+                          <span className="text-rose-700">
+                            핵심과목 부족: {result.missingCore.join(", ")}
+                          </span>
+                        )}
+                        {result.status === "no-data" && (
+                          <span className="text-ink-500">{result.reason}</span>
+                        )}
+                      </div>
+                      {(r.핵심과목 || r.권장과목) && (
+                        <details className="mt-1 text-xs text-ink-700">
+                          <summary className="cursor-pointer select-none text-[11px] text-ink-500 hover:text-ink-900">
+                            상세 보기
+                          </summary>
+                          <div className="mt-1 space-y-1">
+                            {r.핵심과목 && (
+                              <p>
+                                <b className="text-indigo-700">핵심</b>{" "}
+                                <span className="whitespace-pre-wrap break-words">
+                                  {r.핵심과목}
+                                </span>
+                              </p>
+                            )}
+                            {r.권장과목 && (
+                              <p>
+                                <b className="text-cyan-700">권장</b>{" "}
+                                <span className="whitespace-pre-wrap break-words">
+                                  {r.권장과목}
+                                </span>
+                              </p>
+                            )}
+                            {r.비고 && (
+                              <p className="text-[11px] text-ink-500 whitespace-pre-wrap break-words">
+                                ※ {r.비고}
+                              </p>
+                            )}
+                          </div>
+                        </details>
+                      )}
                     </div>
-                    <div className="mt-1 text-xs text-ink-700">
-                      {result.status === "ok" && (
-                        <span className="text-emerald-700">
-                          핵심과목 요건 충족 ({result.coreMet}/{result.coreTotal}
-                          ){result.recTotal > 0 &&
-                            ` · 권장 ${result.recMet}/${result.recTotal}`}
-                        </span>
-                      )}
-                      {result.status === "open" && (
-                        <span className="text-emerald-600">
-                          {result.reason}
-                          {result.recTotal > 0 &&
-                            ` · 권장 ${result.recMet}/${result.recTotal}`}
-                        </span>
-                      )}
-                      {result.status === "partial" && (
-                        <span className="text-amber-700">
-                          핵심 {result.coreMet}/{result.coreTotal} · 부족:{" "}
-                          {result.missingCore.join(", ")}
-                        </span>
-                      )}
-                      {result.status === "unmet" && (
-                        <span className="text-rose-700">
-                          핵심과목 부족: {result.missingCore.join(", ")}
-                        </span>
-                      )}
-                      {result.status === "no-data" && (
-                        <span className="text-ink-500">{result.reason}</span>
-                      )}
-                    </div>
-                    {(r.핵심과목 || r.권장과목) && (
-                      <details className="mt-1 text-xs text-ink-700">
-                        <summary className="cursor-pointer select-none text-[11px] text-ink-500 hover:text-ink-900">
-                          상세 보기
-                        </summary>
-                        <div className="mt-1 space-y-1">
-                          {r.핵심과목 && (
-                            <p>
-                              <b className="text-indigo-700">핵심</b>{" "}
-                              <span className="whitespace-pre-wrap">
-                                {r.핵심과목}
-                              </span>
-                            </p>
-                          )}
-                          {r.권장과목 && (
-                            <p>
-                              <b className="text-cyan-700">권장</b>{" "}
-                              <span className="whitespace-pre-wrap">
-                                {r.권장과목}
-                              </span>
-                            </p>
-                          )}
-                          {r.비고 && (
-                            <p className="text-[11px] text-ink-500">
-                              ※ {r.비고}
-                            </p>
-                          )}
-                        </div>
-                      </details>
-                    )}
                   </div>
-                  <button
-                    onClick={() =>
-                      onPick(
-                        [r],
-                        `${r.대학명} · ${r.학과 || r.단과대_계열}`
-                      )
-                    }
-                    className="shrink-0 text-xs text-indigo-600 hover:underline"
-                  >
-                    출력
-                  </button>
                 </li>
               );
             })}
@@ -506,7 +517,7 @@ function StatusBadge({ status }: { status: string }) {
   if (!m) return null;
   return (
     <span
-      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${m.cls}`}
+      className={`shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-bold ${m.cls}`}
     >
       {m.label}
     </span>
