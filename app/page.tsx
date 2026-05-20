@@ -16,6 +16,8 @@ import CartBar from "@/components/CartBar";
 import SubjectSearch from "@/components/SubjectSearch";
 import AdminLogin from "@/components/AdminLogin";
 import ReferenceLinks from "@/components/ReferenceLinks";
+import StatsBar from "@/components/StatsBar";
+import { trackClick, trackVisit } from "@/lib/track-client";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
 type Tab = "univ" | "subject" | "links";
@@ -42,7 +44,9 @@ export default function Home() {
   const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   useEffect(() => {
-    // Check admin session on mount
+    // Track this visit (deduplicated per visitor UUID per day)
+    trackVisit();
+    // Check admin session
     fetch("/api/admin/check", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => setAdminMode(!!d.authenticated))
@@ -101,6 +105,20 @@ export default function Home() {
   }, [nq, region, area]);
 
   const cartIds = useMemo(() => new Set(cart.map((c) => c.id)), [cart]);
+
+  // Wraps setPrinting and emits a "click" event per row for stats.
+  const openPrint = (mode: PrintMode) => {
+    if (mode.kind === "single") {
+      for (const r of mode.rows) {
+        trackClick(r.대학명, r.학과 || r.단과대_계열 || undefined);
+      }
+    } else if (mode.kind === "compare") {
+      for (const it of mode.items) {
+        trackClick(it.row.대학명, it.row.학과 || it.row.단과대_계열 || undefined);
+      }
+    }
+    setPrinting(mode);
+  };
 
   const toggleCart = (row: File2Row, idx: number) => {
     const id = rowId(row, idx);
@@ -169,6 +187,8 @@ export default function Home() {
         </div>
       </header>
 
+      <StatsBar />
+
       <section className="no-print mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6">
         <div className="inline-flex w-full rounded-lg border border-ink-200 bg-white p-1 shadow-sm sm:w-auto">
           <TabButton
@@ -224,7 +244,7 @@ export default function Home() {
               cartIds={cartIds}
               onToggleCart={toggleCart}
               onPick={(rows, label) =>
-                setPrinting({ kind: "single", rows, label })
+                openPrint({ kind: "single", rows, label })
               }
             />
           )}
@@ -238,7 +258,7 @@ export default function Home() {
               cartIds={cartIds}
               onToggleCart={toggleCart}
               onPick={(rows, label) =>
-                setPrinting({ kind: "single", rows, label })
+                openPrint({ kind: "single", rows, label })
               }
               adminMode={adminMode}
             />
@@ -253,7 +273,7 @@ export default function Home() {
           setCart((prev) => prev.filter((c) => c.id !== id))
         }
         onClear={() => setCart([])}
-        onCompare={() => setPrinting({ kind: "compare", items: cart })}
+        onCompare={() => openPrint({ kind: "compare", items: cart })}
       />
 
       {printing && (
