@@ -122,11 +122,11 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6 sm:py-6 md:flex-row md:items-start md:justify-between md:gap-6">
           <div className="min-w-0">
             <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h1 className="text-xl font-bold text-ink-900 sm:text-2xl">
-                2028 권장과목 검색
+              <h1 className="text-2xl font-bold text-ink-900 sm:text-3xl">
+                대학가자.kr
               </h1>
               <span className="text-xs text-ink-500 sm:text-sm">
-                대학 · 학과별 반영과목 안내
+                2028 권장과목 검색
               </span>
             </div>
             <p className="mt-1 text-sm text-ink-700">
@@ -134,30 +134,37 @@ export default function Home() {
               학과를 역검색할 수 있습니다.
             </p>
           </div>
-          <aside className="rounded-lg border border-ink-200 bg-ink-50/60 px-4 py-2 text-[11px] leading-relaxed text-ink-700 md:shrink-0 md:text-right">
-            <p className="font-semibold text-ink-500">개발 및 문의</p>
-            <p className="flex flex-wrap gap-x-1.5 md:justify-end">
-              <span>배방고등학교 교사 김혜진</span>
-              <a
-                href="mailto:rmeosahf@naver.com"
-                className="text-indigo-700 hover:underline"
-              >
-                rmeosahf@naver.com
-              </a>
-            </p>
-            <p className="flex flex-wrap gap-x-1.5 md:justify-end">
-              <span>천안중학교 교사 임의수</span>
-              <a
-                href="mailto:uisu@kakao.com"
-                className="text-indigo-700 hover:underline"
-              >
-                uisu@kakao.com
-              </a>
-            </p>
-            <p className="mt-2 font-semibold text-ink-500">검수</p>
-            <p>이재훈 선생님(한민고)</p>
-            <p>안석환 선생님(대일외고)</p>
-            <p>이민호 선생님(김천고)</p>
+          <aside className="rounded-lg border border-ink-200 bg-ink-50/60 px-4 py-2 text-[11px] leading-relaxed text-ink-700 md:shrink-0">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+              <div>
+                <p className="font-semibold text-ink-500">개발 및 문의</p>
+                <p className="flex flex-wrap gap-x-1.5">
+                  <span>배방고등학교 교사 김혜진</span>
+                  <a
+                    href="mailto:rmeosahf@naver.com"
+                    className="text-indigo-700 hover:underline"
+                  >
+                    rmeosahf@naver.com
+                  </a>
+                </p>
+                <p className="flex flex-wrap gap-x-1.5">
+                  <span>천안중학교 교사 임의수</span>
+                  <a
+                    href="mailto:uisu@kakao.com"
+                    className="text-indigo-700 hover:underline"
+                  >
+                    uisu@kakao.com
+                  </a>
+                </p>
+                <p>강남규(2시 소프트)</p>
+              </div>
+              <div>
+                <p className="font-semibold text-ink-500">검수</p>
+                <p>이재훈 선생님(한민고)</p>
+                <p>안석환 선생님(대일외고)</p>
+                <p>이민호 선생님(김천고)</p>
+              </div>
+            </div>
           </aside>
         </div>
       </header>
