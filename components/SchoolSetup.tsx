@@ -98,7 +98,15 @@ export default function SchoolSetup({
     };
   }, [onClose, dirty, adminMode]);
 
-  const list = adminMode ? drafts : SCHOOLS;
+  // Always sort by Korean name (가나다) when displaying — guards against
+  // drafts being appended out of order in admin mode.
+  const list = useMemo(
+    () =>
+      (adminMode ? drafts : SCHOOLS)
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name, "ko")),
+    [adminMode, drafts]
+  );
   const viewing = list.find((s) => s.id === viewingId) || null;
 
   // Admin operations

@@ -432,22 +432,22 @@ export default function SubjectSearch({
                           <summary className="cursor-pointer select-none text-[11px] text-ink-500 hover:text-ink-900">
                             상세 보기
                           </summary>
-                          <div className="mt-1.5 space-y-2">
+                          <div className="mt-1.5 space-y-3">
                             {r.핵심과목 && (
                               <div>
-                                <b className="text-indigo-700">핵심</b>
+                                <b className="text-indigo-700">핵심</b>{" "}
                                 <BulletText text={r.핵심과목} />
                               </div>
                             )}
                             {r.권장과목 && (
                               <div>
-                                <b className="text-cyan-700">권장</b>
+                                <b className="text-cyan-700">권장</b>{" "}
                                 <BulletText text={r.권장과목} />
                               </div>
                             )}
                             {r.비고 && (
                               <div className="text-[11px] text-ink-500">
-                                <b>※ 비고</b>
+                                <b>※ 비고</b>{" "}
                                 <BulletText text={r.비고} />
                               </div>
                             )}
