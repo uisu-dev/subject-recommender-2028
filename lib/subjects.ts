@@ -568,6 +568,77 @@ export const SUBJECTS: SubjectDef[] = [
   { name: "컴퓨터 구조", aliases: ["컴퓨터 구조", "컴퓨터구조"], domain: "기타" },
   { name: "컴퓨터 네트워크", aliases: ["컴퓨터 네트워크", "컴퓨터네트워크"], domain: "기타" },
   { name: "합창·합주", aliases: ["합창·합주"], domain: "기타" },
+
+  // ============================================
+  // 추가된 진로·융합·전문 과목 (천안 지역 16개 고교 편제표 기반)
+  // ============================================
+
+  // ----- 수학 -----
+  { name: "고급 기하", aliases: ["고급 기하", "고급기하"], domain: "수학" },
+
+  // ----- 영어 -----
+  { name: "고급 영어 토론과 작문", aliases: ["고급 영어 토론과 작문", "고급영어토론과작문"], domain: "영어" },
+  { name: "영어 연구 및 세미나1", aliases: ["영어 연구 및 세미나1", "영어연구및세미나1"], domain: "영어" },
+
+  // ----- 사회 -----
+  { name: "한국 사회의 이해", aliases: ["한국 사회의 이해", "한국사회의이해"], domain: "사회" },
+
+  // ----- 과학 -----
+  { name: "고급 지구과학", aliases: ["고급 지구과학", "고급지구과학"], domain: "과학" },
+  { name: "과학과제 연구", aliases: ["과학과제 연구", "과학과제연구"], domain: "과학" },
+
+  // ----- 기타 -----
+  { name: "기초발레Ⅰ-1", aliases: ["기초발레Ⅰ-1"], domain: "기타" },
+  { name: "기초발레Ⅰ-2", aliases: ["기초발레Ⅰ-2"], domain: "기타" },
+  { name: "기초발레Ⅱ-1", aliases: ["기초발레Ⅱ-1"], domain: "기타" },
+  { name: "기초발레Ⅱ-2", aliases: ["기초발레Ⅱ-2"], domain: "기타" },
+  { name: "기초발레Ⅲ-1", aliases: ["기초발레Ⅲ-1"], domain: "기타" },
+  { name: "기초발레Ⅲ-2", aliases: ["기초발레Ⅲ-2"], domain: "기타" },
+  { name: "기초한국무용Ⅰ-1", aliases: ["기초한국무용Ⅰ-1"], domain: "기타" },
+  { name: "기초한국무용Ⅰ-2", aliases: ["기초한국무용Ⅰ-2"], domain: "기타" },
+  { name: "기초한국무용Ⅱ-1", aliases: ["기초한국무용Ⅱ-1"], domain: "기타" },
+  { name: "기초한국무용Ⅱ-2", aliases: ["기초한국무용Ⅱ-2"], domain: "기타" },
+  { name: "기초한국무용Ⅲ-1", aliases: ["기초한국무용Ⅲ-1"], domain: "기타" },
+  { name: "기초한국무용Ⅲ-2", aliases: ["기초한국무용Ⅲ-2"], domain: "기타" },
+  { name: "기초현대무용Ⅰ-1", aliases: ["기초현대무용Ⅰ-1"], domain: "기타" },
+  { name: "기초현대무용Ⅰ-2", aliases: ["기초현대무용Ⅰ-2"], domain: "기타" },
+  { name: "기초현대무용Ⅱ-1", aliases: ["기초현대무용Ⅱ-1"], domain: "기타" },
+  { name: "기초현대무용Ⅱ-2", aliases: ["기초현대무용Ⅱ-2"], domain: "기타" },
+  { name: "기초현대무용Ⅲ-1", aliases: ["기초현대무용Ⅲ-1"], domain: "기타" },
+  { name: "기초현대무용Ⅲ-2", aliases: ["기초현대무용Ⅲ-2"], domain: "기타" },
+  { name: "무용 감상과 비평", aliases: ["무용 감상과 비평", "무용감상과비평"], domain: "기타" },
+  { name: "무용 음악 실습", aliases: ["무용 음악 실습", "무용음악실습"], domain: "기타" },
+  { name: "무용 제작 실습", aliases: ["무용 제작 실습", "무용제작실습"], domain: "기타" },
+  { name: "무용과 매체", aliases: ["무용과 매체", "무용과매체"], domain: "기타" },
+  { name: "무용과 몸", aliases: ["무용과 몸", "무용과몸"], domain: "기타" },
+  { name: "무용의 이해", aliases: ["무용의 이해", "무용의이해"], domain: "기타" },
+  { name: "발레Ⅰ-1", aliases: ["발레Ⅰ-1"], domain: "기타" },
+  { name: "발레Ⅰ-2", aliases: ["발레Ⅰ-2"], domain: "기타" },
+  { name: "발레Ⅱ-1", aliases: ["발레Ⅱ-1"], domain: "기타" },
+  { name: "발레Ⅱ-2", aliases: ["발레Ⅱ-2"], domain: "기타" },
+  { name: "발레Ⅲ-1", aliases: ["발레Ⅲ-1"], domain: "기타" },
+  { name: "발레Ⅲ-2", aliases: ["발레Ⅲ-2"], domain: "기타" },
+  { name: "빅 데이터 분석", aliases: ["빅 데이터 분석", "빅데이터분석"], domain: "기타" },
+  { name: "사물 인터넷과 센서 제어", aliases: ["사물 인터넷과 센서 제어", "사물인터넷과센서제어"], domain: "기타" },
+  { name: "생애 설계와 자립", aliases: ["생애 설계와 자립", "생애설계와자립"], domain: "기타" },
+  { name: "생활과 창의성", aliases: ["생활과 창의성", "생활과창의성"], domain: "기타" },
+  { name: "안무", aliases: ["안무"], domain: "기타" },
+  { name: "연극", aliases: ["연극"], domain: "기타" },
+  { name: "연극 감상과 비평", aliases: ["연극 감상과 비평", "연극감상과비평"], domain: "기타" },
+  { name: "응용 프로그래밍 개발", aliases: ["응용 프로그래밍 개발", "응용프로그래밍개발"], domain: "기타" },
+  { name: "전기·전자 일반", aliases: ["전기·전자 일반", "전기·전자일반"], domain: "기타" },
+  { name: "한국무용Ⅰ-1", aliases: ["한국무용Ⅰ-1"], domain: "기타" },
+  { name: "한국무용Ⅰ-2", aliases: ["한국무용Ⅰ-2"], domain: "기타" },
+  { name: "한국무용Ⅱ-1", aliases: ["한국무용Ⅱ-1"], domain: "기타" },
+  { name: "한국무용Ⅱ-2", aliases: ["한국무용Ⅱ-2"], domain: "기타" },
+  { name: "한국무용Ⅲ-1", aliases: ["한국무용Ⅲ-1"], domain: "기타" },
+  { name: "한국무용Ⅲ-2", aliases: ["한국무용Ⅲ-2"], domain: "기타" },
+  { name: "현대무용Ⅰ-1", aliases: ["현대무용Ⅰ-1"], domain: "기타" },
+  { name: "현대무용Ⅰ-2", aliases: ["현대무용Ⅰ-2"], domain: "기타" },
+  { name: "현대무용Ⅱ-1", aliases: ["현대무용Ⅱ-1"], domain: "기타" },
+  { name: "현대무용Ⅱ-2", aliases: ["현대무용Ⅱ-2"], domain: "기타" },
+  { name: "현대무용Ⅲ-1", aliases: ["현대무용Ⅲ-1"], domain: "기타" },
+  { name: "현대무용Ⅲ-2", aliases: ["현대무용Ⅲ-2"], domain: "기타" },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
