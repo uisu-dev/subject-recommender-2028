@@ -193,9 +193,14 @@ export default function SchoolSetup({
   );
 
   return (
-    <div className="fixed inset-0 z-[60]">
-      <div className="absolute inset-0 bg-ink-900/60" onClick={onClose} />
-      <div className="absolute inset-x-2 top-4 bottom-4 mx-auto flex max-w-5xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl sm:inset-x-4 sm:top-1/2 sm:bottom-auto sm:-translate-y-1/2">
+    <div
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-ink-900/60 p-2 sm:items-center sm:p-4"
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative flex max-h-[calc(100vh-1rem)] w-full max-w-5xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl sm:max-h-[calc(100vh-2rem)]"
+      >
         <header className="flex items-start justify-between gap-3 border-b border-ink-200 bg-ink-50 px-5 py-3">
           <div className="min-w-0">
             <h2 className="flex items-center gap-2 text-base font-bold text-ink-900">
@@ -241,7 +246,7 @@ export default function SchoolSetup({
           </div>
         </header>
 
-        <div className="grid flex-1 grid-rows-[auto,1fr] sm:h-[600px] sm:grid-cols-[260px,1fr] sm:grid-rows-1">
+        <div className="grid min-h-0 flex-1 grid-rows-[auto,1fr] sm:grid-cols-[260px,1fr] sm:grid-rows-1">
           <aside className="overflow-y-auto border-b border-ink-200 bg-ink-50/40 p-3 sm:border-b-0 sm:border-r sm:max-h-none max-h-48">
             {adminMode && (
               <button
