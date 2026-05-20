@@ -98,37 +98,65 @@ export default function PrintPreview({
             </button>
           </div>
         </div>
-        <div className="mx-auto grid max-w-6xl gap-2 px-4 pb-3 sm:gap-3 sm:px-6 md:grid-cols-3">
-          <HeaderField
-            label="학교명"
-            placeholder="예: ○○고등학교"
-            value={draft.schoolName}
-            onChange={(v) => setDraft({ ...draft, schoolName: v })}
-          />
-          <HeaderField
-            label="상담교사"
-            placeholder="예: 홍길동"
-            value={draft.counselor}
-            onChange={(v) => setDraft({ ...draft, counselor: v })}
-          />
-          <HeaderField
-            label="학생"
-            placeholder="예: 김민수"
-            value={draft.student}
-            onChange={(v) => setDraft({ ...draft, student: v })}
-          />
+        <div className="mx-auto max-w-6xl px-4 pb-3 sm:px-6">
+          <div className="grid gap-2 sm:gap-3 md:grid-cols-3">
+            <HeaderField
+              label="학교명"
+              placeholder="예: ○○고등학교"
+              value={draft.schoolName}
+              onChange={(v) => setDraft({ ...draft, schoolName: v })}
+            />
+            <HeaderField
+              label="상담교사"
+              placeholder="예: 홍길동"
+              value={draft.counselor}
+              onChange={(v) => setDraft({ ...draft, counselor: v })}
+            />
+            <HeaderField
+              label="학생"
+              placeholder="예: 김민수"
+              value={draft.student}
+              onChange={(v) => setDraft({ ...draft, student: v })}
+            />
+          </div>
+          <label className="mt-2 block">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-500">
+              상담 내용 기록
+            </span>
+            <textarea
+              value={draft.notes}
+              onChange={(e) => setDraft({ ...draft, notes: e.target.value })}
+              rows={3}
+              placeholder="예: 학생의 관심 학과, 권장 방향, 추가 안내사항 등을 자유롭게 작성하세요. 줄바꿈도 그대로 출력됩니다."
+              className="mt-0.5 w-full resize-y rounded-md border border-ink-200 bg-white px-3 py-1.5 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-200"
+            />
+          </label>
         </div>
       </div>
 
-      <div className="absolute inset-0 overflow-auto px-4 pb-12 pt-44">
+      <div className="absolute inset-0 overflow-auto px-4 pb-12 pt-60 sm:pt-56">
         <div className={`print-area ${isLandscape ? "a4-landscape" : "a4-preview"}`}>
           <PrintHeader title={title} today={today} info={draft} />
+          {draft.notes.trim() && <NotesSection notes={draft.notes} />}
           {mode.kind === "single" && <File2Print rows={mode.rows} />}
           {mode.kind === "compare" && <ComparePrint items={mode.items} />}
           <PrintFooter />
         </div>
       </div>
     </div>
+  );
+}
+
+function NotesSection({ notes }: { notes: string }) {
+  return (
+    <section className="mb-6 rounded-md border border-indigo-200 bg-indigo-50/40 p-4">
+      <h3 className="mb-2 text-xs font-bold uppercase tracking-wider text-indigo-700">
+        상담 내용
+      </h3>
+      <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-ink-900">
+        {notes}
+      </p>
+    </section>
   );
 }
 

@@ -42,6 +42,7 @@ export default function Home() {
     schoolName: "",
     counselor: "",
     student: "",
+    notes: "",
   });
   const [adminMode, setAdminMode] = useState(false);
   const [showAdminLogin, setShowAdminLogin] = useState(false);
@@ -70,6 +71,7 @@ export default function Home() {
           schoolName: parsed.schoolName || "",
           counselor: parsed.counselor || "",
           student: "",
+          notes: "",
         });
       }
     } catch {

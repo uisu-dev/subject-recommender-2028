@@ -9,6 +9,7 @@ import {
   regionList,
   getAreasForRegion,
   tokenizeQuery,
+  referencedSubjects,
 } from "@/lib/data";
 import FilterChips from "./FilterChips";
 import { CONTACT_EMAIL, SCHOOLS, loadActiveId, saveActiveId } from "@/lib/schools";
@@ -67,10 +68,24 @@ export default function SubjectSearch({
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showSetup, setShowSetup] = useState(false);
+  const [collapsedDomains, setCollapsedDomains] = useState<Set<Domain>>(
+    new Set()
+  );
 
   useEffect(() => {
     setActiveId(loadActiveId());
   }, []);
+
+  const toggleDomain = (d: Domain) => {
+    setCollapsedDomains((prev) => {
+      const next = new Set(prev);
+      if (next.has(d)) next.delete(d);
+      else next.add(d);
+      return next;
+    });
+  };
+  const expandAll = () => setCollapsedDomains(new Set());
+  const collapseAll = () => setCollapsedDomains(new Set(DOMAIN_ORDER));
 
   const handleActiveChange = (id: string | null) => {
     setActiveId(id);
@@ -247,39 +262,73 @@ export default function SubjectSearch({
               </button>
             </div>
           </div>
-          <p className="mb-3 text-[11px] leading-relaxed text-ink-500">
+          <p className="mb-2 text-[11px] leading-relaxed text-ink-500">
             학생이 이수했거나 이수할 과목을 체크하면, 핵심과목 요건이 충족되는
             학과가 우선 노출됩니다.
           </p>
-          <div className="space-y-3">
+          <div className="mb-2 flex justify-end gap-2 text-[10px]">
+            <button
+              onClick={expandAll}
+              className="text-ink-500 hover:text-ink-900 hover:underline"
+            >
+              전체 펼치기
+            </button>
+            <span className="text-ink-300">·</span>
+            <button
+              onClick={collapseAll}
+              className="text-ink-500 hover:text-ink-900 hover:underline"
+            >
+              전체 접기
+            </button>
+          </div>
+          <div className="space-y-2">
             {DOMAIN_ORDER.map((d) => {
-              const subs = SUBJECTS.filter((s) => s.domain === d).filter(
-                (s) => !offeredSet || offeredSet.has(s.name)
-              );
+              const subs = SUBJECTS.filter((s) => s.domain === d).filter((s) => {
+                // Active school → only that school's offered subjects
+                if (offeredSet) return offeredSet.has(s.name);
+                // No school → only subjects referenced by university data
+                return referencedSubjects.has(s.name);
+              });
               if (subs.length === 0) return null;
+              const isCollapsed = collapsedDomains.has(d);
+              const checkedCount = subs.filter((s) => selected.has(s.name)).length;
               return (
                 <div key={d}>
-                  <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-ink-500">
-                    {d}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {subs.map((s) => {
-                      const on = selected.has(s.name);
-                      return (
-                        <button
-                          key={s.name}
-                          onClick={() => toggleSubject(s.name)}
-                          className={`rounded-full border px-2.5 py-1 text-[11px] transition ${
-                            on
-                              ? "border-indigo-600 bg-indigo-600 text-white"
-                              : "border-ink-200 bg-white text-ink-700 hover:bg-ink-50"
-                          }`}
-                        >
-                          {s.name}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <button
+                    onClick={() => toggleDomain(d)}
+                    className="mb-1 flex w-full items-center justify-between rounded px-1 py-0.5 hover:bg-ink-50"
+                    aria-expanded={!isCollapsed}
+                  >
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-ink-500">
+                      {d}
+                      <span className="ml-1 normal-case text-ink-400">
+                        ({checkedCount > 0 ? `${checkedCount}/` : ""}{subs.length})
+                      </span>
+                    </span>
+                    <span className="text-[10px] text-ink-400">
+                      {isCollapsed ? "▶" : "▼"}
+                    </span>
+                  </button>
+                  {!isCollapsed && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {subs.map((s) => {
+                        const on = selected.has(s.name);
+                        return (
+                          <button
+                            key={s.name}
+                            onClick={() => toggleSubject(s.name)}
+                            className={`rounded-full border px-2.5 py-1 text-[11px] transition ${
+                              on
+                                ? "border-indigo-600 bg-indigo-600 text-white"
+                                : "border-ink-200 bg-white text-ink-700 hover:bg-ink-50"
+                            }`}
+                          >
+                            {s.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}

@@ -13,6 +13,8 @@ export type HeaderInfo = {
   schoolName: string;
   counselor: string;
   student: string;
+  /** Multi-line counseling notes shown on the printed PDF. Not persisted. */
+  notes: string;
 };
 
 export type CartItem = {

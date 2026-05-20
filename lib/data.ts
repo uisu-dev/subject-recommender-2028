@@ -15,6 +15,21 @@ export const file2Parsed: File2RowWithParsed[] = file2.map((r) => ({
   parsedRec: parseRequirement(r.권장과목),
 }));
 
+/**
+ * Set of canonical subject names that actually appear in the 2028 권역별
+ * 대학별 권장과목(반영과목) data. Used as the default filter for the "이수한
+ * 과목" checklist when no school is selected — keeps the list focused on
+ * subjects that universities actually care about.
+ */
+export const referencedSubjects: Set<string> = (() => {
+  const s = new Set<string>();
+  for (const r of file2Parsed) {
+    for (const subj of r.parsedCore.specific) s.add(subj);
+    for (const subj of r.parsedRec.specific) s.add(subj);
+  }
+  return s;
+})();
+
 export function rowId(r: File2Row, idx: number): string {
   return `${r.대학명}::${r.단과대_계열}::${r.학과}::${idx}`;
 }
