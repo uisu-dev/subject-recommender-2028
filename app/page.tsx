@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import {
   file2Parsed,
   normalize,
@@ -157,9 +158,18 @@ export default function Home() {
       <header className="no-print bg-white border-b border-ink-200">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6 sm:py-6 md:flex-row md:items-start md:justify-between md:gap-6">
           <div className="min-w-0">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <h1 className="text-2xl font-bold text-ink-900 sm:text-3xl">
-                대학가자.kr
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <h1 className="flex items-center">
+                <Image
+                  src="/logo.png"
+                  alt="대학가자.kr"
+                  width={1376}
+                  height={768}
+                  priority
+                  sizes="(max-width: 640px) 180px, 240px"
+                  className="h-12 w-auto sm:h-14"
+                />
+                <span className="sr-only">대학가자.kr</span>
               </h1>
               <span className="text-xs text-ink-500 sm:text-sm">
                 2028 권장과목 검색
