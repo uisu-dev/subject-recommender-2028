@@ -17,13 +17,14 @@ import PrintPreview from "@/components/PrintPreview";
 import FilterChips from "@/components/FilterChips";
 import CartBar from "@/components/CartBar";
 import SubjectSearch from "@/components/SubjectSearch";
+import PersonalizedGuide from "@/components/PersonalizedGuide";
 import AdminLogin from "@/components/AdminLogin";
 import ReferenceLinks from "@/components/ReferenceLinks";
 import StatsBar from "@/components/StatsBar";
 import { trackClick, trackVisit } from "@/lib/track-client";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
-type Tab = "univ" | "subject" | "links";
+type Tab = "univ" | "guide" | "subject" | "links";
 type PrintMode =
   | { kind: "single"; rows: File2Row[]; label: string }
   | { kind: "compare"; items: CartItem[] };
@@ -220,12 +221,18 @@ export default function Home() {
       <StatsBar />
 
       <section className="no-print mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-6">
-        <div className="inline-flex w-full rounded-lg border border-ink-200 bg-white p-1 shadow-sm sm:w-auto">
+        <div className="inline-flex w-full flex-wrap rounded-lg border border-ink-200 bg-white p-1 shadow-sm sm:w-auto sm:flex-nowrap">
           <TabButton
             active={tab === "univ"}
             onClick={() => setTab("univ")}
             label="대학 / 학과별 검색"
             count={tab === "univ" && query ? file2Hits.length : null}
+          />
+          <TabButton
+            active={tab === "guide"}
+            onClick={() => setTab("guide")}
+            label="맞춤형 진학지도"
+            count={null}
           />
           <TabButton
             active={tab === "subject"}
@@ -276,6 +283,21 @@ export default function Home() {
               onPick={(rows, label) =>
                 openPrint({ kind: "single", rows, label })
               }
+            />
+          )}
+          {tab === "guide" && (
+            <PersonalizedGuide
+              rows={file2Parsed}
+              region={region}
+              area={area}
+              setRegion={handleRegionChange}
+              setArea={setArea}
+              cartIds={cartIds}
+              onToggleCart={toggleCart}
+              onPick={(rows, label) =>
+                openPrint({ kind: "single", rows, label })
+              }
+              adminMode={adminMode}
             />
           )}
           {tab === "subject" && (

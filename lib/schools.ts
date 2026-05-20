@@ -42,4 +42,28 @@ export function saveActiveId(id: string | null): void {
   }
 }
 
+// Taken subjects shared across "과목 이수 기반 검색" and "맞춤형 진학지도" tabs
+
+const TAKEN_KEY = "subject-recommender:taken-subjects";
+
+export function loadTakenSubjects(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(TAKEN_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? new Set(arr.filter((x) => typeof x === "string")) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+export function saveTakenSubjects(s: Set<string>): void {
+  try {
+    localStorage.setItem(TAKEN_KEY, JSON.stringify(Array.from(s)));
+  } catch {
+    // ignore
+  }
+}
+
 export const CONTACT_EMAIL = "uisu@kakao.com";

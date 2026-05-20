@@ -12,7 +12,14 @@ import {
   referencedSubjects,
 } from "@/lib/data";
 import FilterChips from "./FilterChips";
-import { CONTACT_EMAIL, SCHOOLS, loadActiveId, saveActiveId } from "@/lib/schools";
+import {
+  CONTACT_EMAIL,
+  SCHOOLS,
+  loadActiveId,
+  saveActiveId,
+  loadTakenSubjects,
+  saveTakenSubjects,
+} from "@/lib/schools";
 import SchoolSetup from "./SchoolSetup";
 import BulletText from "./BulletText";
 
@@ -68,13 +75,22 @@ export default function SubjectSearch({
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string | null>(null);
   const [showSetup, setShowSetup] = useState(false);
+  // Default to all-collapsed — users requested less visual clutter on entry
   const [collapsedDomains, setCollapsedDomains] = useState<Set<Domain>>(
-    new Set()
+    () => new Set(DOMAIN_ORDER)
   );
 
   useEffect(() => {
     setActiveId(loadActiveId());
+    // Restore subjects shared with 맞춤형 진학지도 tab via localStorage
+    const persisted = loadTakenSubjects();
+    if (persisted.size > 0) setSelected(persisted);
   }, []);
+
+  // Persist taken subjects whenever they change
+  useEffect(() => {
+    saveTakenSubjects(selected);
+  }, [selected]);
 
   const toggleDomain = (d: Domain) => {
     setCollapsedDomains((prev) => {
