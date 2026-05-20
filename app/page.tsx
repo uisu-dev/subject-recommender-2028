@@ -15,9 +15,10 @@ import FilterChips from "@/components/FilterChips";
 import CartBar from "@/components/CartBar";
 import SubjectSearch from "@/components/SubjectSearch";
 import AdminLogin from "@/components/AdminLogin";
+import ReferenceLinks from "@/components/ReferenceLinks";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
-type Tab = "univ" | "subject";
+type Tab = "univ" | "subject" | "links";
 type PrintMode =
   | { kind: "single"; rows: File2Row[]; label: string }
   | { kind: "compare"; items: CartItem[] };
@@ -163,7 +164,7 @@ export default function Home() {
             active={tab === "univ"}
             onClick={() => setTab("univ")}
             label="대학 / 학과별 검색"
-            count={tab !== "subject" && query ? file2Hits.length : null}
+            count={tab === "univ" && query ? file2Hits.length : null}
           />
           <TabButton
             active={tab === "subject"}
@@ -171,9 +172,15 @@ export default function Home() {
             label="과목 이수 기반 검색"
             count={null}
           />
+          <TabButton
+            active={tab === "links"}
+            onClick={() => setTab("links")}
+            label="진학 참고 사이트"
+            count={null}
+          />
         </div>
 
-        {tab !== "subject" && (
+        {tab === "univ" && (
           <div className="mt-4 space-y-3">
             <SearchBox value={query} onChange={setQuery} />
             <div className="flex flex-wrap items-center gap-2">
@@ -225,6 +232,7 @@ export default function Home() {
               adminMode={adminMode}
             />
           )}
+          {tab === "links" && <ReferenceLinks />}
         </div>
       </section>
 
