@@ -639,6 +639,60 @@ export const SUBJECTS: SubjectDef[] = [
   { name: "현대무용Ⅱ-2", aliases: ["현대무용Ⅱ-2"], domain: "기타" },
   { name: "현대무용Ⅲ-1", aliases: ["현대무용Ⅲ-1"], domain: "기타" },
   { name: "현대무용Ⅲ-2", aliases: ["현대무용Ⅲ-2"], domain: "기타" },
+
+  // ============================================
+  // 추가: 공주 지역 7개 고교 편제표 기반 (AP/IB·과제연구·외국어 등)
+  // ============================================
+
+  // ----- 수학 -----
+  { name: "AP미적분학 Ⅰ", aliases: ["AP미적분학 Ⅰ", "AP미적분학Ⅰ"], domain: "수학" },
+  { name: "AP미적분학Ⅱ", aliases: ["AP미적분학Ⅱ"], domain: "수학" },
+  { name: "AP선형대수학", aliases: ["AP선형대수학"], domain: "수학" },
+  { name: "IB 수학 분석과 접근 HL Ⅰ", aliases: ["IB 수학 분석과 접근 HL Ⅰ", "IB수학분석과접근HLⅠ"], domain: "수학" },
+  { name: "IB 수학 분석과 접근 HL Ⅱ", aliases: ["IB 수학 분석과 접근 HL Ⅱ", "IB수학분석과접근HLⅡ"], domain: "수학" },
+  { name: "IB 수학 분석과 접근 HL Ⅲ", aliases: ["IB 수학 분석과 접근 HL Ⅲ", "IB수학분석과접근HLⅢ"], domain: "수학" },
+  { name: "IB 수학 분석과 접근 HL Ⅳ", aliases: ["IB 수학 분석과 접근 HL Ⅳ", "IB수학분석과접근HLⅣ"], domain: "수학" },
+  { name: "기하학 과제연구", aliases: ["기하학 과제연구", "기하학과제연구"], domain: "수학" },
+  { name: "수치해석 과제연구", aliases: ["수치해석 과제연구", "수치해석과제연구"], domain: "수학" },
+  { name: "정수론 과제연구", aliases: ["정수론 과제연구", "정수론과제연구"], domain: "수학" },
+  { name: "통계이론 과제연구", aliases: ["통계이론 과제연구", "통계이론과제연구"], domain: "수학" },
+  { name: "함수론 과제연구", aliases: ["함수론 과제연구", "함수론과제연구"], domain: "수학" },
+
+  // ----- 사회 -----
+  { name: "IB 창의융합과제연구 Ⅲ", aliases: ["IB 창의융합과제연구 Ⅲ", "IB창의융합과제연구Ⅲ"], domain: "사회" },
+  { name: "IB 창의융합과제연구 Ⅳ", aliases: ["IB 창의융합과제연구 Ⅳ", "IB창의융합과제연구Ⅳ"], domain: "사회" },
+  { name: "사회과제 연구", aliases: ["사회과제 연구", "사회과제연구"], domain: "사회" },
+  { name: "세계시민과 문화 간 교류", aliases: ["세계시민과 문화 간 교류", "세계시민과문화간교류"], domain: "사회" },
+
+  // ----- 과학 -----
+  { name: "AP일반물리학Ⅱ", aliases: ["AP일반물리학Ⅱ"], domain: "과학" },
+  { name: "AP일반생물학", aliases: ["AP일반생물학"], domain: "과학" },
+  { name: "AP일반화학Ⅱ", aliases: ["AP일반화학Ⅱ"], domain: "과학" },
+  { name: "IB 생명과학 SL Ⅳ", aliases: ["IB 생명과학 SL Ⅳ", "IB생명과학SLⅣ"], domain: "과학" },
+  { name: "생명공학 연구", aliases: ["생명공학 연구", "생명공학연구"], domain: "과학" },
+  { name: "생명과학 과제연구", aliases: ["생명과학 과제연구", "생명과학과제연구"], domain: "과학" },
+  { name: "생명과학 융합연구", aliases: ["생명과학 융합연구", "생명과학융합연구"], domain: "과학" },
+  { name: "융합과학 과제연구", aliases: ["융합과학 과제연구", "융합과학과제연구"], domain: "과학" },
+  { name: "인체 구조와 기능", aliases: ["인체 구조와 기능", "인체구조와기능"], domain: "과학" },
+  { name: "지구과학개론", aliases: ["지구과학개론"], domain: "과학" },
+  { name: "화학 과제연구", aliases: ["화학 과제연구", "화학과제연구"], domain: "과학" },
+  { name: "화학공학 연구", aliases: ["화학공학 연구", "화학공학연구"], domain: "과학" },
+  { name: "화학세미나", aliases: ["화학세미나"], domain: "과학" },
+
+  // ----- 기타 -----
+  { name: "AP프로그래밍과 문제해결", aliases: ["AP프로그래밍과 문제해결", "AP프로그래밍과문제해결"], domain: "기타" },
+  { name: "관광 일본어", aliases: ["관광 일본어", "관광일본어"], domain: "기타" },
+  { name: "관광 중국어", aliases: ["관광 중국어", "관광중국어"], domain: "기타" },
+  { name: "광공학 과제연구", aliases: ["광공학 과제연구", "광공학과제연구"], domain: "기타" },
+  { name: "기계공학 과제연구", aliases: ["기계공학 과제연구", "기계공학과제연구"], domain: "기타" },
+  { name: "문제해결기법 탐구", aliases: ["문제해결기법 탐구", "문제해결기법탐구"], domain: "기타" },
+  { name: "음악 공연 실습", aliases: ["음악 공연 실습", "음악공연실습"], domain: "기타" },
+  { name: "음악과 문화", aliases: ["음악과 문화", "음악과문화"], domain: "기타" },
+  { name: "전기공학 과제연구", aliases: ["전기공학 과제연구", "전기공학과제연구"], domain: "기타" },
+  { name: "정보과학 과제연구", aliases: ["정보과학 과제연구", "정보과학과제연구"], domain: "기타" },
+  { name: "정보과학 융합탐구", aliases: ["정보과학 융합탐구", "정보과학융합탐구"], domain: "기타" },
+  { name: "프랑스어 회화", aliases: ["프랑스어 회화", "프랑스어회화"], domain: "기타" },
+  { name: "프랑스어권 문화", aliases: ["프랑스어권 문화", "프랑스어권문화"], domain: "기타" },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
