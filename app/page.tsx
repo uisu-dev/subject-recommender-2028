@@ -20,11 +20,12 @@ import SubjectSearch from "@/components/SubjectSearch";
 import PersonalizedGuide from "@/components/PersonalizedGuide";
 import AdminLogin from "@/components/AdminLogin";
 import ReferenceLinks from "@/components/ReferenceLinks";
+import Board from "@/components/Board";
 import StatsBar from "@/components/StatsBar";
 import { trackClick, trackVisit } from "@/lib/track-client";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
 
-type Tab = "univ" | "guide" | "subject" | "links";
+type Tab = "univ" | "guide" | "subject" | "links" | "board";
 type PrintMode =
   | { kind: "single"; rows: File2Row[]; label: string }
   | { kind: "compare"; items: CartItem[] };
@@ -246,6 +247,12 @@ export default function Home() {
             label="진학 참고 사이트"
             count={null}
           />
+          <TabButton
+            active={tab === "board"}
+            onClick={() => setTab("board")}
+            label="게시판"
+            count={null}
+          />
         </div>
 
         {tab === "univ" && (
@@ -316,6 +323,7 @@ export default function Home() {
             />
           )}
           {tab === "links" && <ReferenceLinks />}
+          {tab === "board" && <Board adminMode={adminMode} />}
         </div>
       </section>
 
