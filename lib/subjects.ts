@@ -704,6 +704,11 @@ export const SUBJECTS: SubjectDef[] = [
   { name: "공중 보건", aliases: ["공중 보건", "공중보건"], domain: "기타" },
   { name: "복지 서비스의 기초", aliases: ["복지 서비스의 기초", "복지서비스의 기초"], domain: "기타" },
   { name: "인공지능 일반", aliases: ["인공지능 일반", "인공지능일반"], domain: "기타" },
+
+  // ----- 추가: 당진 지역 -----
+  { name: "인간과 환경", aliases: ["인간과 환경", "인간과환경"], domain: "사회" },
+  { name: "영상 제작의 이해", aliases: ["영상 제작의 이해", "영상제작의 이해"], domain: "기타" },
+  { name: "정보 처리와 관리", aliases: ["정보 처리와 관리", "정보처리와 관리"], domain: "기타" },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
