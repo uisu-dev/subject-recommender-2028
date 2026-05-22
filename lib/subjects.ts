@@ -697,6 +697,13 @@ export const SUBJECTS: SubjectDef[] = [
   // ----- 추가: 서산 지역 -----
   { name: "미래형 항공기체", aliases: ["미래형 항공기체", "미래형항공기체"], domain: "기타" },
   { name: "심화 프랑스어", aliases: ["심화 프랑스어", "심화프랑스어"], domain: "기타" },
+
+  // ----- 추가: 논산·계룡 지역 -----
+  { name: "문학 감상과 비평", aliases: ["문학 감상과 비평", "문학감상과 비평"], domain: "국어" },
+  { name: "간호의 기초", aliases: ["간호의 기초", "간호의기초"], domain: "기타" },
+  { name: "공중 보건", aliases: ["공중 보건", "공중보건"], domain: "기타" },
+  { name: "복지 서비스의 기초", aliases: ["복지 서비스의 기초", "복지서비스의 기초"], domain: "기타" },
+  { name: "인공지능 일반", aliases: ["인공지능 일반", "인공지능일반"], domain: "기타" },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
