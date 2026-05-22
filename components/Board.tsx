@@ -7,6 +7,14 @@ type Post = {
   title: string;
   body: string;
   createdAt: number;
+  commentCount?: number;
+};
+
+type Comment = {
+  id: string;
+  postId: string;
+  body: string;
+  createdAt: number;
 };
 
 type Props = {
@@ -16,6 +24,7 @@ type Props = {
 const PAGE_SIZE = 20;
 const MAX_TITLE = 80;
 const MAX_BODY = 2000;
+const MAX_COMMENT = 500;
 
 function timeAgo(ms: number): string {
   const diff = Date.now() - ms;
@@ -129,6 +138,15 @@ export default function Board({ adminMode }: Props) {
                       <span>익명</span>
                       <span>·</span>
                       <span>{timeAgo(p.createdAt)}</span>
+                      {typeof p.commentCount === "number" &&
+                        p.commentCount > 0 && (
+                          <>
+                            <span>·</span>
+                            <span className="font-semibold text-indigo-600">
+                              💬 {p.commentCount}
+                            </span>
+                          </>
+                        )}
                     </div>
                     {!opened && (
                       <p className="mt-1.5 line-clamp-2 text-xs text-ink-700">
@@ -154,6 +172,27 @@ export default function Board({ adminMode }: Props) {
                     </button>
                   )}
                 </div>
+                {opened && (
+                  <CommentSection
+                    postId={p.id}
+                    adminMode={adminMode}
+                    onCountChange={(delta) => {
+                      setPosts((prev) =>
+                        prev.map((x) =>
+                          x.id === p.id
+                            ? {
+                                ...x,
+                                commentCount: Math.max(
+                                  0,
+                                  (x.commentCount || 0) + delta
+                                ),
+                              }
+                            : x
+                        )
+                      );
+                    }}
+                  />
+                )}
               </li>
             );
           })}
@@ -183,6 +222,152 @@ export default function Board({ adminMode }: Props) {
             setComposeOpen(false);
           }}
         />
+      )}
+    </div>
+  );
+}
+
+function CommentSection({
+  postId,
+  adminMode,
+  onCountChange,
+}: {
+  postId: string;
+  adminMode: boolean;
+  onCountChange: (delta: number) => void;
+}) {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [body, setBody] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/board/${postId}/comments`, {
+          cache: "no-store",
+        });
+        const data = await res.json();
+        if (alive) setComments(data.comments || []);
+      } catch {
+        if (alive) setComments([]);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [postId]);
+
+  const submit = async () => {
+    if (submitting || !body.trim()) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/board/${postId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "등록 실패");
+        return;
+      }
+      setComments((prev) => [...prev, data.comment]);
+      setBody("");
+      onCountChange(1);
+    } catch (e: any) {
+      setError(e?.message || "네트워크 오류");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (commentId: string) => {
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
+    const res = await fetch(`/api/board/${postId}/comments/${commentId}`, {
+      method: "DELETE",
+    });
+    if (!res.ok) {
+      alert("삭제 실패. 관리자 로그인 상태를 확인하세요.");
+      return;
+    }
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
+    onCountChange(-1);
+  };
+
+  return (
+    <div className="border-t border-ink-100 bg-ink-50/40 px-4 py-3">
+      <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-ink-500">
+        댓글 {comments.length > 0 && `(${comments.length})`}
+      </p>
+
+      {loading ? (
+        <p className="text-xs text-ink-500">불러오는 중…</p>
+      ) : comments.length === 0 ? (
+        <p className="text-xs text-ink-500">
+          아직 댓글이 없습니다. 첫 댓글을 남겨보세요.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {comments.map((c) => (
+            <li
+              key={c.id}
+              className="flex items-start gap-2 rounded-md bg-white p-2.5 shadow-sm"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline gap-2 text-[10px] text-ink-500">
+                  <span>익명</span>
+                  <span>·</span>
+                  <span>{timeAgo(c.createdAt)}</span>
+                </div>
+                <p className="mt-0.5 whitespace-pre-wrap break-words text-xs leading-relaxed text-ink-900">
+                  {c.body}
+                </p>
+              </div>
+              {adminMode && (
+                <button
+                  onClick={() => handleDelete(c.id)}
+                  className="shrink-0 rounded border border-rose-200 bg-white px-1.5 py-0.5 text-[9px] text-rose-600 hover:bg-rose-50"
+                  title="관리자: 삭제"
+                >
+                  ✕
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <div
+        className="mt-3 flex gap-2"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <textarea
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          maxLength={MAX_COMMENT}
+          rows={2}
+          placeholder={`댓글을 입력하세요 (${body.length}/${MAX_COMMENT})`}
+          className="min-w-0 flex-1 resize-y rounded-md border border-ink-200 bg-white px-3 py-2 text-xs focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-200"
+        />
+        <button
+          onClick={submit}
+          disabled={submitting || !body.trim()}
+          className="shrink-0 self-start rounded-md bg-indigo-600 px-3 py-2 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-40"
+        >
+          {submitting ? "등록 중" : "댓글 등록"}
+        </button>
+      </div>
+      {error && (
+        <p className="mt-2 rounded bg-rose-50 px-2 py-1 text-[11px] text-rose-700">
+          ⚠ {error}
+        </p>
       )}
     </div>
   );
