@@ -709,6 +709,29 @@ export const SUBJECTS: SubjectDef[] = [
   { name: "인간과 환경", aliases: ["인간과 환경", "인간과환경"], domain: "사회" },
   { name: "영상 제작의 이해", aliases: ["영상 제작의 이해", "영상제작의 이해"], domain: "기타" },
   { name: "정보 처리와 관리", aliases: ["정보 처리와 관리", "정보처리와 관리"], domain: "기타" },
+
+  // ----- 추가: 부여·서천·청양·홍성·예산·태안 지역 (충남디자인예술고 특화 포함) -----
+  { name: "디자인 일반", aliases: ["디자인 일반", "디자인일반"], domain: "기타" },
+  { name: "디자인 콘텐츠 기초", aliases: ["디자인 콘텐츠 기초", "디자인콘텐츠기초"], domain: "기타" },
+  { name: "디지털 만화창작Ⅰ", aliases: ["디지털 만화창작Ⅰ", "디지털만화창작Ⅰ"], domain: "기타" },
+  { name: "디지털 만화창작Ⅱ", aliases: ["디지털 만화창작Ⅱ", "디지털만화창작Ⅱ"], domain: "기타" },
+  { name: "만화 콘텐츠 제작", aliases: ["만화 콘텐츠 제작", "만화콘텐츠제작"], domain: "기타" },
+  { name: "만화창작Ⅰ", aliases: ["만화창작Ⅰ"], domain: "기타" },
+  { name: "만화창작Ⅱ", aliases: ["만화창작Ⅱ"], domain: "기타" },
+  { name: "색채 일반", aliases: ["색채 일반", "색채일반"], domain: "기타" },
+  { name: "애니메이션 기초", aliases: ["애니메이션 기초", "애니메이션기초"], domain: "기타" },
+  { name: "애니메이션 제작 심화", aliases: ["애니메이션 제작 심화", "애니메이션제작심화"], domain: "기타" },
+  { name: "애니메이션 콘텐츠 제작", aliases: ["애니메이션 콘텐츠 제작", "애니메이션콘텐츠제작"], domain: "기타" },
+  { name: "영상 제작 기초", aliases: ["영상 제작 기초", "영상제작기초"], domain: "기타" },
+  { name: "예산글로컬 잉글리쉬", aliases: ["예산글로컬 잉글리쉬", "예산글로컬잉글리쉬"], domain: "영어" },
+  { name: "창업 일반", aliases: ["창업 일반", "창업일반"], domain: "기타" },
+  { name: "창의적 발상 표현기법Ⅰ", aliases: ["창의적 발상 표현기법Ⅰ", "창의적발상표현기법Ⅰ"], domain: "기타" },
+  { name: "창의적 발상 표현기법Ⅱ", aliases: ["창의적 발상 표현기법Ⅱ", "창의적발상표현기법Ⅱ"], domain: "기타" },
+  { name: "캐릭터 제작", aliases: ["캐릭터 제작", "캐릭터제작"], domain: "기타" },
+  { name: "컴퓨터 그래픽", aliases: ["컴퓨터 그래픽", "컴퓨터그래픽"], domain: "기타" },
+  { name: "패션 디자인의 기초", aliases: ["패션 디자인의 기초", "패션디자인의기초"], domain: "기타" },
+  { name: "패션 소재", aliases: ["패션 소재", "패션소재"], domain: "기타" },
+  { name: "회계 원리", aliases: ["회계 원리", "회계원리"], domain: "기타" },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
