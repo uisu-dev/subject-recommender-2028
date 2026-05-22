@@ -1,22 +1,11 @@
 "use client";
 
+import HighlightedText from "./HighlightedText";
+
 /**
  * Renders free-text content that contains "-" bullet markers as a clean
- * unordered list.
- *
- * Example input:
- *   "전공기초 학업 역량 -수학 일반선택 과목: 대수 -수학 진로선택 과목: 미적분Ⅱ"
- * → Renders:
- *   전공기초 학업 역량
- *   • 수학 일반선택 과목: 대수
- *   • 수학 진로선택 과목: 미적분Ⅱ
- *
- * Detection rule:
- *   A bullet starts at "<whitespace>-<Korean letter>" or at the very start
- *   of the string if it begins with "-<Korean>". This avoids false matches
- *   on regular hyphens like "한양대-에리카" or "1-2".
- *
- * If no bullet pattern is detected, the text renders as plain inline content.
+ * unordered list. Optionally wraps subject names from `highlights` in a
+ * colored <mark> via HighlightedText.
  */
 
 type Parsed = {
@@ -28,7 +17,6 @@ function parseBullets(raw: string): Parsed {
   const text = (raw || "").trim();
   if (!text) return { intro: "", items: [] };
 
-  // Normalize bullet markers: " -Korean" or "<TAB>-Korean" → newline-dash
   const normalized = text.replace(/\s+-(?=[가-힣])/g, "\n-");
 
   const lines = normalized.split(/\n+/);
@@ -42,7 +30,6 @@ function parseBullets(raw: string): Parsed {
     } else if (items.length === 0) {
       intro = intro ? intro + " " + t : t;
     } else {
-      // Continuation of a bullet line (rare; defensive)
       items[items.length - 1] += " " + t;
     }
   }
@@ -51,17 +38,40 @@ function parseBullets(raw: string): Parsed {
 
 type Props = {
   text: string;
-  /** Optional className applied to the wrapping element when items exist. */
   className?: string;
-  /** Bullet style — defaults to "disc" (small dot). Use "none" for chips/inline. */
   marker?: "disc" | "none";
+  /**
+   * When provided, subject names from this set are highlighted in the text
+   * via the HighlightedText component (canonical names + their aliases).
+   */
+  highlights?: Set<string>;
 };
 
-export default function BulletText({ text, className = "", marker = "disc" }: Props) {
+function renderInline(text: string, highlights?: Set<string>) {
+  if (highlights && highlights.size > 0) {
+    return <HighlightedText text={text} highlights={highlights} />;
+  }
+  return (
+    <span className="whitespace-pre-wrap break-words">{text}</span>
+  );
+}
+
+export default function BulletText({
+  text,
+  className = "",
+  marker = "disc",
+  highlights,
+}: Props) {
   const { intro, items } = parseBullets(text);
 
-  // No bullet markers detected → render inline as before
   if (items.length === 0) {
+    if (highlights && highlights.size > 0) {
+      return (
+        <span className={className}>
+          <HighlightedText text={text} highlights={highlights} />
+        </span>
+      );
+    }
     return (
       <span className={`whitespace-pre-wrap break-words ${className}`}>
         {text}
@@ -72,16 +82,20 @@ export default function BulletText({ text, className = "", marker = "disc" }: Pr
   return (
     <div className={className}>
       {intro && (
-        <p className="whitespace-pre-wrap break-words">{intro}</p>
+        <p className="whitespace-pre-wrap break-words">
+          {renderInline(intro, highlights)}
+        </p>
       )}
       <ul
         className={`mt-1 space-y-0.5 ${
-          marker === "disc" ? "list-disc pl-4 marker:text-ink-300" : "list-none pl-0"
+          marker === "disc"
+            ? "list-disc pl-4 marker:text-ink-300"
+            : "list-none pl-0"
         }`}
       >
         {items.map((item, i) => (
           <li key={i} className="whitespace-pre-wrap break-words">
-            {item}
+            {renderInline(item, highlights)}
           </li>
         ))}
       </ul>

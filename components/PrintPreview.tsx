@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { CartItem, File2Row, HeaderInfo } from "@/lib/types";
+import { loadTakenSubjects } from "@/lib/schools";
 import BulletText from "./BulletText";
 
 type Mode =
@@ -22,10 +23,17 @@ export default function PrintPreview({
   onClose,
 }: Props) {
   const [draft, setDraft] = useState<HeaderInfo>(headerInfo);
+  const [taken, setTaken] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     setDraft(headerInfo);
   }, [headerInfo]);
+
+  // Load student's taken subjects once when the preview opens, so 핵심·권장
+  // text can highlight matched subjects in green.
+  useEffect(() => {
+    setTaken(loadTakenSubjects());
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -138,8 +146,12 @@ export default function PrintPreview({
         <div className={`print-area ${isLandscape ? "a4-landscape" : "a4-preview"}`}>
           <PrintHeader title={title} today={today} info={draft} />
           {draft.notes.trim() && <NotesSection notes={draft.notes} />}
-          {mode.kind === "single" && <File2Print rows={mode.rows} />}
-          {mode.kind === "compare" && <ComparePrint items={mode.items} />}
+          {mode.kind === "single" && (
+            <File2Print rows={mode.rows} highlights={taken} />
+          )}
+          {mode.kind === "compare" && (
+            <ComparePrint items={mode.items} highlights={taken} />
+          )}
           <PrintFooter />
         </div>
       </div>
@@ -237,7 +249,13 @@ function PrintFooter() {
   );
 }
 
-function File2Print({ rows }: { rows: File2Row[] }) {
+function File2Print({
+  rows,
+  highlights,
+}: {
+  rows: File2Row[];
+  highlights?: Set<string>;
+}) {
   if (rows.length === 0) return null;
   return (
     <section className="space-y-4">
@@ -264,7 +282,7 @@ function File2Print({ rows }: { rows: File2Row[] }) {
                     핵심과목
                   </th>
                   <td className="py-1.5 text-ink-900">
-                    <BulletText text={r.핵심과목} />
+                    <BulletText text={r.핵심과목} highlights={highlights} />
                   </td>
                 </tr>
               )}
@@ -274,7 +292,7 @@ function File2Print({ rows }: { rows: File2Row[] }) {
                     권장과목
                   </th>
                   <td className="py-1.5 text-ink-900">
-                    <BulletText text={r.권장과목} />
+                    <BulletText text={r.권장과목} highlights={highlights} />
                   </td>
                 </tr>
               )}
@@ -296,13 +314,29 @@ function File2Print({ rows }: { rows: File2Row[] }) {
   );
 }
 
-function ComparePrint({ items }: { items: CartItem[] }) {
+function ComparePrint({
+  items,
+  highlights,
+}: {
+  items: CartItem[];
+  highlights?: Set<string>;
+}) {
   const cols = items.length;
   const widthPct = Math.floor(100 / (cols + 1));
   return (
     <section>
       <p className="mb-3 text-xs text-ink-500">
         선택한 학과 {cols}개의 권장과목을 한 페이지에 비교한 표입니다.
+        {highlights && highlights.size > 0 && (
+          <>
+            {" "}
+            학생이 이수한 과목은{" "}
+            <mark className="rounded bg-emerald-100 px-1 text-emerald-800 font-semibold">
+              초록색
+            </mark>
+            으로 표시됩니다.
+          </>
+        )}
       </p>
       <table className="w-full border-collapse text-[11px]">
         <thead>
@@ -338,12 +372,14 @@ function ComparePrint({ items }: { items: CartItem[] }) {
             labelColor="text-indigo-700"
             items={items}
             value={(r) => r.핵심과목}
+            highlights={highlights}
           />
           <CompareRow
             label="권장과목"
             labelColor="text-cyan-700"
             items={items}
             value={(r) => r.권장과목}
+            highlights={highlights}
           />
           <CompareRow
             label="비고"
@@ -364,12 +400,14 @@ function CompareRow({
   items,
   value,
   small,
+  highlights,
 }: {
   label: string;
   labelColor: string;
   items: CartItem[];
   value: (r: File2Row) => string;
   small?: boolean;
+  highlights?: Set<string>;
 }) {
   const anyValue = items.some((it) => value(it.row));
   if (!anyValue) return null;
@@ -380,16 +418,26 @@ function CompareRow({
       >
         {label}
       </th>
-      {items.map((it) => (
-        <td
-          key={it.id}
-          className={`border-l border-ink-100 px-2 py-2 ${
-            small ? "text-[10px] text-ink-700" : "text-[11px] text-ink-900"
-          } whitespace-pre-wrap`}
-        >
-          {value(it.row) || "—"}
-        </td>
-      ))}
+      {items.map((it) => {
+        const text = value(it.row);
+        return (
+          <td
+            key={it.id}
+            className={`border-l border-ink-100 px-2 py-2 ${
+              small ? "text-[10px] text-ink-700" : "text-[11px] text-ink-900"
+            }`}
+          >
+            {text ? (
+              <BulletText
+                text={text}
+                highlights={small ? undefined : highlights}
+              />
+            ) : (
+              "—"
+            )}
+          </td>
+        );
+      })}
     </tr>
   );
 }
