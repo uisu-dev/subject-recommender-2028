@@ -693,6 +693,10 @@ export const SUBJECTS: SubjectDef[] = [
   { name: "정보과학 융합탐구", aliases: ["정보과학 융합탐구", "정보과학융합탐구"], domain: "기타" },
   { name: "프랑스어 회화", aliases: ["프랑스어 회화", "프랑스어회화"], domain: "기타" },
   { name: "프랑스어권 문화", aliases: ["프랑스어권 문화", "프랑스어권문화"], domain: "기타" },
+
+  // ----- 추가: 서산 지역 -----
+  { name: "미래형 항공기체", aliases: ["미래형 항공기체", "미래형항공기체"], domain: "기타" },
+  { name: "심화 프랑스어", aliases: ["심화 프랑스어", "심화프랑스어"], domain: "기타" },
 ];
 
 // Umbrella terms — present in text when no specific subject is named.
